@@ -348,13 +348,28 @@
             animation-play-state: paused;
         }
 
-        .exercise-instruction {
-            background: #dbeafe;
-            border-radius: 8px;
-            padding: 16px;
-            margin: 0 auto 24px;
-            max-width: 500px;
-            color: #1e40af;
+        /* Video Container */
+        .video-container {
+            margin: 16px 0 24px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
         .controls {
@@ -645,6 +660,11 @@
                         </div>
                     </div>
 
+                    <!-- Video -->
+                    <div id="exerciseVideo" class="video-container">
+                        <!-- YouTube video will be embedded here -->
+                    </div>
+
                     <div id="exerciseDescription" class="exercise-instruction">
                         <p>Make large, controlled circles with your arms to warm up your shoulder joints and prepare for your swing.</p>
                     </div>
@@ -691,58 +711,58 @@
     </div>
 
     <script>
-        // Exercise database
+        // Exercise database with YouTube videos
         const exercises = {
             5: [
-                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints." },
-                { name: "Torso Twists", duration: 60, description: "Rotate your torso left and right to loosen your core muscles." },
-                { name: "Practice Swings", duration: 180, description: "Take slow, controlled practice swings focusing on your form." }
+                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints.", videoId: "pLZUNE6PBBo" },
+                { name: "Torso Twists", duration: 60, description: "Rotate your torso left and right to loosen your core muscles.", videoId: "N5VXfKKjz1E" },
+                { name: "Practice Swings", duration: 180, description: "Take slow, controlled practice swings focusing on your form.", videoId: "gAySCm5w1EM" }
             ],
             10: [
-                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints." },
-                { name: "Shoulder Rolls", duration: 45, description: "Roll your shoulders forward and backward to release tension." },
-                { name: "Hip Circles", duration: 60, description: "Make circular motions with your hips to improve mobility." },
-                { name: "Leg Swings", duration: 75, description: "Swing each leg forward and back to activate your hip flexors." },
-                { name: "Torso Twists", duration: 60, description: "Rotate your torso left and right to loosen your core muscles." },
-                { name: "Practice Swings", duration: 300, description: "Take slow, controlled practice swings focusing on your tempo and form." }
+                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints.", videoId: "pLZUNE6PBBo" },
+                { name: "Shoulder Rolls", duration: 45, description: "Roll your shoulders forward and backward to release tension.", videoId: "wQJKaVtB14Q" },
+                { name: "Hip Circles", duration: 60, description: "Make circular motions with your hips to improve mobility.", videoId: "yCwlw04uN7w" },
+                { name: "Leg Swings", duration: 75, description: "Swing each leg forward and back to activate your hip flexors.", videoId: "h2Zx7bOjGXY" },
+                { name: "Torso Twists", duration: 60, description: "Rotate your torso left and right to loosen your core muscles.", videoId: "N5VXfKKjz1E" },
+                { name: "Practice Swings", duration: 300, description: "Take slow, controlled practice swings focusing on your tempo and form.", videoId: "gAySCm5w1EM" }
             ],
             15: [
-                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints." },
-                { name: "Shoulder Rolls", duration: 45, description: "Roll your shoulders forward and backward to release tension." },
-                { name: "Hip Circles", duration: 60, description: "Make circular motions with your hips to improve mobility." },
-                { name: "Leg Swings", duration: 90, description: "Swing each leg forward and back, then side to side." },
-                { name: "Torso Twists", duration: 75, description: "Rotate your torso left and right with increasing range of motion." },
-                { name: "Balance Exercise", duration: 90, description: "Stand on one foot for 15 seconds, then switch. Improves stability." },
-                { name: "Practice Swings", duration: 300, description: "Take practice swings at varying speeds, focusing on rhythm." },
-                { name: "Putting Stroke Practice", duration: 180, description: "Practice your putting stroke motion without a ball." }
+                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints.", videoId: "pLZUNE6PBBo" },
+                { name: "Shoulder Rolls", duration: 45, description: "Roll your shoulders forward and backward to release tension.", videoId: "wQJKaVtB14Q" },
+                { name: "Hip Circles", duration: 60, description: "Make circular motions with your hips to improve mobility.", videoId: "yCwlw04uN7w" },
+                { name: "Leg Swings", duration: 90, description: "Swing each leg forward and back, then side to side.", videoId: "h2Zx7bOjGXY" },
+                { name: "Torso Twists", duration: 75, description: "Rotate your torso left and right with increasing range of motion.", videoId: "N5VXfKKjz1E" },
+                { name: "Balance Exercise", duration: 90, description: "Stand on one foot for 15 seconds, then switch. Improves stability.", videoId: "eqAP4GkFKRI" },
+                { name: "Practice Swings", duration: 300, description: "Take practice swings at varying speeds, focusing on rhythm.", videoId: "gAySCm5w1EM" },
+                { name: "Putting Stroke Practice", duration: 180, description: "Practice your putting stroke motion without a ball.", videoId: "Hp6w0hgGpR4" }
             ],
             20: [
-                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints." },
-                { name: "Shoulder Rolls", duration: 60, description: "Roll your shoulders forward and backward to release tension." },
-                { name: "Hip Circles", duration: 75, description: "Make circular motions with your hips to improve mobility." },
-                { name: "Leg Swings", duration: 90, description: "Swing each leg forward/back, then side to side for full range." },
-                { name: "Torso Twists", duration: 90, description: "Rotate your torso left and right with controlled movement." },
-                { name: "Ankle Rolls", duration: 60, description: "Roll your ankles clockwise and counterclockwise." },
-                { name: "Balance Exercise", duration: 120, description: "Single-leg balance with eyes closed for added challenge." },
-                { name: "Half Swings", duration: 180, description: "Take controlled half swings focusing on club path." },
-                { name: "Practice Swings", duration: 240, description: "Full practice swings with tempo focus." },
-                { name: "Putting Practice", duration: 180, description: "Practice putting stroke and visualization." },
-                { name: "Mental Prep", duration: 135, description: "Take deep breaths and visualize your first few shots." }
+                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints.", videoId: "pLZUNE6PBBo" },
+                { name: "Shoulder Rolls", duration: 60, description: "Roll your shoulders forward and backward to release tension.", videoId: "wQJKaVtB14Q" },
+                { name: "Hip Circles", duration: 75, description: "Make circular motions with your hips to improve mobility.", videoId: "yCwlw04uN7w" },
+                { name: "Leg Swings", duration: 90, description: "Swing each leg forward/back, then side to side for full range.", videoId: "h2Zx7bOjGXY" },
+                { name: "Torso Twists", duration: 90, description: "Rotate your torso left and right with controlled movement.", videoId: "N5VXfKKjz1E" },
+                { name: "Ankle Rolls", duration: 60, description: "Roll your ankles clockwise and counterclockwise.", videoId: "IYkVJIlCsNg" },
+                { name: "Balance Exercise", duration: 120, description: "Single-leg balance with eyes closed for added challenge.", videoId: "eqAP4GkFKRI" },
+                { name: "Half Swings", duration: 180, description: "Take controlled half swings focusing on club path.", videoId: "aVFAH6rh5vw" },
+                { name: "Practice Swings", duration: 240, description: "Full practice swings with tempo focus.", videoId: "gAySCm5w1EM" },
+                { name: "Putting Practice", duration: 180, description: "Practice putting stroke and visualization.", videoId: "Hp6w0hgGpR4" },
+                { name: "Mental Prep", duration: 135, description: "Take deep breaths and visualize your first few shots.", videoId: "kCGe_aBKYQw" }
             ],
             30: [
-                { name: "Arm Circles", duration: 90, description: "Large and small circles to fully warm up shoulders." },
-                { name: "Shoulder Rolls", duration: 60, description: "Forward and backward rolls to release tension." },
-                { name: "Hip Circles", duration: 90, description: "Full range hip circles in both directions." },
-                { name: "Leg Swings", duration: 120, description: "Front/back and side swings for complete hip mobility." },
-                { name: "Torso Twists", duration: 90, description: "Progressive twists with increasing range of motion." },
-                { name: "Ankle Rolls", duration: 60, description: "Full ankle mobility in all directions." },
-                { name: "Balance Challenge", duration: 120, description: "Advanced balance exercises with movement." },
-                { name: "Dynamic Stretching", duration: 180, description: "Walking lunges and leg kicks." },
-                { name: "Half Swings", duration: 240, description: "Controlled half swings focusing on fundamentals." },
-                { name: "Practice Swings", duration: 300, description: "Full swings with rhythm and tempo focus." },
-                { name: "Short Game Practice", duration: 240, description: "Chipping and pitching motion practice." },
-                { name: "Putting Practice", duration: 180, description: "Stroke mechanics and distance control." },
-                { name: "Mental Preparation", duration: 240, description: "Visualization and positive affirmations." }
+                { name: "Arm Circles", duration: 90, description: "Large and small circles to fully warm up shoulders.", videoId: "pLZUNE6PBBo" },
+                { name: "Shoulder Rolls", duration: 60, description: "Forward and backward rolls to release tension.", videoId: "wQJKaVtB14Q" },
+                { name: "Hip Circles", duration: 90, description: "Full range hip circles in both directions.", videoId: "yCwlw04uN7w" },
+                { name: "Leg Swings", duration: 120, description: "Front/back and side swings for complete hip mobility.", videoId: "h2Zx7bOjGXY" },
+                { name: "Torso Twists", duration: 90, description: "Progressive twists with increasing range of motion.", videoId: "N5VXfKKjz1E" },
+                { name: "Ankle Rolls", duration: 60, description: "Full ankle mobility in all directions.", videoId: "IYkVJIlCsNg" },
+                { name: "Balance Challenge", duration: 120, description: "Advanced balance exercises with movement.", videoId: "eqAP4GkFKRI" },
+                { name: "Dynamic Stretching", duration: 180, description: "Walking lunges and leg kicks.", videoId: "yPM3U8oCYco" },
+                { name: "Half Swings", duration: 240, description: "Controlled half swings focusing on fundamentals.", videoId: "aVFAH6rh5vw" },
+                { name: "Practice Swings", duration: 300, description: "Full swings with rhythm and tempo focus.", videoId: "gAySCm5w1EM" },
+                { name: "Short Game Practice", duration: 240, description: "Chipping and pitching motion practice.", videoId: "EG1p5O25YTQ" },
+                { name: "Putting Practice", duration: 180, description: "Stroke mechanics and distance control.", videoId: "Hp6w0hgGpR4" },
+                { name: "Mental Preparation", duration: 240, description: "Visualization and positive affirmations.", videoId: "kCGe_aBKYQw" }
             ]
         };
 
