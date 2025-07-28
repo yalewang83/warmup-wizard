@@ -1,515 +1,527 @@
-# Warm-Up Wizard iOS App - Design & Implementation Plan
-
-## 1. App Architecture Overview
-
-### Tech Stack
-- **Platform:** Web Application (React/TypeScript)
-- **Frontend Framework:** React 18 with TypeScript
-- **State Management:** Zustand or React Context
-- **Styling:** Tailwind CSS with shadcn/ui components
-- **Data Storage:** localStorage for user preferences, IndexedDB for offline capabilities
-- **Backend:** Node.js/Express with PostgreSQL (for user accounts and analytics)
-- **Hosting:** Vercel/Netlify for frontend, Railway/Render for backend
-- **PWA Features:** Service Worker for offline access and app-like experience
-
-### Core Components
-```
-warmup-wizard/
-├── src/
-│   ├── components/
-│   │   ├── onboarding/
-│   │   ├── routine-generation/
-│   │   ├── exercise-execution/
-│   │   ├── settings/
-│   │   └── common/
-│   ├── hooks/
-│   │   ├── useRoutineGenerator.ts
-│   │   ├── useTimer.ts
-│   │   └── useLocalStorage.ts
-│   ├── stores/
-│   │   ├── userStore.ts
-│   │   ├── routineStore.ts
-│   │   └── settingsStore.ts
-│   ├── services/
-│   │   ├── routineEngine.ts
-│   │   ├── dataManager.ts
-│   │   └── notificationService.ts
-│   ├── types/
-│   │   ├── user.ts
-│   │   ├── routine.ts
-│   │   └── exercise.ts
-│   └── utils/
-├── public/
-│   ├── exercises/
-│   │   ├── videos/
-│   │   └── images/
-│   └── manifest.json (PWA)
-└── package.json
-```
-
-## 2. User Flow & Core Features
-
-### 2.1 Initial Onboarding (First Launch)
-**Screen 1: Welcome & Value Prop**
-- Hero image of golfer warming up
-- "Get pro-style warm-ups tailored to your time and skill level"
-- "Get Started" CTA
-
-**Screen 2: Skill Level Assessment**
-- Beginner (0-2 years playing)
-- Intermediate (3-10 years playing)
-- Advanced (10+ years playing)
-- Visual handicap range indicators
-
-**Screen 3: Physical Considerations**
-- Any mobility limitations? (Yes/No with details)
-- Preferred warm-up intensity (Low/Medium/High)
-- Equipment preferences (stretching bands, weighted clubs, etc.)
-
-**Screen 4: Notification Permissions**
-- "Get reminders to start your warm-up before tee time"
-- Location permissions for course-specific recommendations
-
-### 2.2 Main User Journey
-
-#### Quick Start Flow (Primary Path)
-1. **Time Input Screen**
-   - Large time selector (5-60 minutes, default: 10 minutes)
-   - "How much time before your tee time?"
-   - Quick presets: 5min, 10min, 15min, 20min, 30min
-
-2. **Context Questions (Optional Skip)**
-   - Course difficulty (Easy/Moderate/Challenging)
-   - Weather conditions (slider or quick select)
-   - Recent performance mood (Great/Good/Needs Work)
-   - Current energy level (Low/Medium/High)
-
-3. **Generated Routine Screen**
-   - Personalized routine title: "Your 15-Minute Power Warm-Up"
-   - Exercise overview with time allocations
-   - "Start Warm-Up" prominent CTA
-   - "Customize" option for advanced users
-
-4. **Exercise Execution**
-   - Full-screen exercise cards with animations/videos
-   - Progress bar and timer
-   - Voice instructions toggle
-   - Skip/Previous exercise controls
-   - Pause/Resume functionality
-
-5. **Completion & Feedback**
-   - "You're ready to play!" success message
-   - Quick feedback: "How did that feel?" (thumbs up/down)
-   - "Start Another Round" or "Save This Routine"
-
-### 2.3 Advanced Features
-
-#### Routine Customization
-- Drag-and-drop exercise reordering
-- Add/remove exercises from library
-- Adjust individual exercise duration
-- Save custom routines
-
-#### Performance Tracking
-- Simple post-round check-in
-- Track warm-up completion rates
-- Correlate warm-up types with round performance
-- Weekly/monthly insights
-
-#### Smart Recommendations
-- Learn from user preferences and feedback
-- Weather-based exercise modifications
-- Course-specific warm-up suggestions
-- Time-of-day optimization
-
-## 3. Exercise Library & Routine Engine
-
-### 3.1 Exercise Categories
-
-**Dynamic Stretching (5-15 minutes)**
-- Arm circles and shoulder rolls
-- Hip circles and leg swings
-- Torso twists and side bends
-- Ankle rolls and calf raises
-
-**Golf-Specific Movements (5-20 minutes)**
-- Practice swings with alignment sticks
-- Half-swing tempo work
-- Weight shift drills
-- Balance and stability exercises
-
-**Short Game Practice (5-15 minutes)**
-- Putting stroke mechanics
-- Chipping motion practice
-- Sand shot setup positions
-- Distance control drills
-
-**Mental Preparation (2-10 minutes)**
-- Visualization exercises
-- Breathing techniques
-- Focus and concentration drills
-- Positive affirmation prompts
-
-### 3.2 Routine Generation Algorithm
-
-```swift
-func generateRoutine(
-    timeAvailable: Int,
-    skillLevel: SkillLevel,
-    physicalLimitations: [String],
-    courseConditions: CourseConditions,
-    recentPerformance: PerformanceLevel,
-    userPreferences: UserPreferences
-) -> WarmUpRoutine {
-    
-    // Time allocation logic
-    let timeDistribution = calculateTimeDistribution(timeAvailable)
-    
-    // Exercise selection based on user profile
-    let selectedExercises = selectExercises(
-        from: exerciseLibrary,
-        matching: [skillLevel, physicalLimitations, courseConditions]
-    )
-    
-    // Personalization adjustments
-    let personalizedRoutine = applyPersonalization(
-        exercises: selectedExercises,
-        based: [recentPerformance, userPreferences]
-    )
-    
-    return WarmUpRoutine(
-        exercises: personalizedRoutine,
-        totalDuration: timeAvailable,
-        difficulty: calculateDifficulty()
-    )
-}
-```
-
-### 3.3 Time Distribution Logic
-- **5 minutes:** Essential stretching + 1-2 practice swings (ultra-quick)
-- **10-15 minutes:** Basic stretching + golf-specific movements + putting practice
-- **15-25 minutes:** Add short game drills + mental prep
-- **25+ minutes:** Full comprehensive routine with all categories
-
-## 4. User Interface Design
-
-### 4.1 Design Principles
-- **Speed First:** Minimize clicks to get to a routine
-- **Mobile-Responsive:** Optimized for smartphones and tablets
-- **Cross-Platform:** Works on any device with a web browser
-- **PWA Ready:** App-like experience with offline capabilities
-- **Accessibility:** WCAG 2.1 compliant for all users
-
-### 4.2 Key Screens Design
-
-#### Home Screen
-```
-┌─────────────────────────────┐
-│  ⏰ Ready to warm up?       │
-│                             │
-│  ┌─────────────────────────┐│
-│  │     10 minutes          ││
-│  │   [- 5min ] [+ 5min]    ││
-│  └─────────────────────────┘│
-│                             │
-│  [Generate My Warm-Up]      │
-│                             │
-│  Quick Options:             │
-│  [5min] [10min] [15min]     │
-│  [20min] [30min]            │
-│                             │
-│  Recent Routines ▼          │
-│  • Morning Power Warm-Up    │
-│  • Quick Pre-Round Stretch  │
-└─────────────────────────────┘
-```
-
-#### Exercise Execution Screen
-```
-┌─────────────────────────────┐
-│ [◀] Exercise 3 of 8    [⏸] │
-│                             │
-│     ARM CIRCLES             │
-│                             │
-│  ┌─────────────────────────┐│
-│  │    [Animation/GIF]      ││
-│  │     Golf figure         ││
-│  │   doing arm circles     ││
-│  └─────────────────────────┘│
-│                             │
-│    ⏱️  0:45 remaining        │
-│                             │
-│  "Make large, controlled    │
-│   circles to warm up your   │
-│   shoulder joints"          │
-│                             │
-│  [Skip Exercise]            │
-└─────────────────────────────┘
-```
-
-### 4.3 Visual Elements
-- **Color Scheme:** Golf course greens with accent blues
-- **Typography:** System fonts (Inter/SF Pro) for optimal web rendering
-- **Icons:** Golf-specific iconography with Lucide React icons
-- **Responsive Design:** Mobile-first approach with breakpoints
-- **Animations:** CSS transitions and Framer Motion for smooth interactions
-
-## 5. Data Models
-
-### 5.1 TypeScript Interfaces
-
-```typescript
-// User Profile
-interface UserProfile {
-  id: string;
-  skillLevel: SkillLevel;
-  physicalLimitations: string[];
-  preferredIntensity: IntensityLevel;
-  equipmentAvailable: Equipment[];
-  preferredDuration: number;
-  notificationPreferences: NotificationSettings;
-  createdAt: Date;
-  lastActive: Date;
-}
-
-// Warm-Up Routine
-interface WarmUpRoutine {
-  id: string;
-  name: string;
-  exercises: Exercise[];
-  totalDuration: number; // in seconds
-  skillLevelTargeted: SkillLevel;
-  createdDate: Date;
-  completionRate: number;
-  tags: string[];
-}
-
-// Exercise
-interface Exercise {
-  id: string;
-  name: string;
-  description: string;
-  category: ExerciseCategory;
-  duration: number; // in seconds
-  difficulty: DifficultyLevel;
-  equipmentNeeded: Equipment[];
-  videoUrl?: string;
-  imageUrl?: string;
-  instructions: string[];
-  tips: string[];
-}
-
-// Performance Tracking
-interface WarmUpSession {
-  id: string;
-  routineId: string;
-  completedAt: Date;
-  completed: boolean;
-  skippedExercises: string[];
-  userFeedback?: FeedbackRating;
-  subsequentRoundScore?: number;
-  deviceInfo: {
-    userAgent: string;
-    screenSize: string;
-  };
-}
-```
-
-## 6. Technical Implementation Details
-
-### 6.1 Routine Generation Service
-
-```typescript
-class RoutineEngine {
-  private exerciseLibrary: ExerciseLibrary;
-  private userProfile: UserProfile;
-  
-  generateRoutine(parameters: RoutineParameters): WarmUpRoutine {
-    // 1. Calculate time allocations
-    const allocations = TimeAllocationCalculator.calculate(
-      parameters.duration,
-      this.userProfile.skillLevel
-    );
-    
-    // 2. Filter exercises by constraints
-    const availableExercises = this.exerciseLibrary.exercises
-      .filter(exercise => this.meetsConstraints(exercise, parameters));
-    
-    // 3. Select optimal combination
-    const selectedExercises = ExerciseSelector.selectOptimalSet(
-      availableExercises,
-      allocations,
-      this.userProfile
-    );
-    
-    // 4. Order exercises logically
-    const orderedExercises = ExerciseOrderer.orderForOptimalFlow(
-      selectedExercises
-    );
-    
-    return {
-      id: crypto.randomUUID(),
-      name: this.generateRoutineName(parameters),
-      exercises: orderedExercises,
-      totalDuration: parameters.duration,
-      skillLevelTargeted: this.userProfile.skillLevel,
-      createdDate: new Date(),
-      completionRate: 0,
-      tags: this.generateTags(parameters)
-    };
-  }
-  
-  private meetsConstraints(exercise: Exercise, params: RoutineParameters): boolean {
-    // Implement constraint checking logic
-    return true;
-  }
-}
-```
-
-### 6.2 Timer and Exercise Management
-
-```typescript
-// Custom Hook for Exercise Timer
-export const useExerciseTimer = (routine: WarmUpRoutine) => {
-  const [currentExercise, setCurrentExercise] = useState<Exercise | null>(null);
-  const [timeRemaining, setTimeRemaining] = useState<number>(0);
-  const [isRunning, setIsRunning] = useState<boolean>(false);
-  const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number>(0);
-  
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  
-  const startExercise = useCallback(() => {
-    setIsRunning(true);
-    timerRef.current = setInterval(() => {
-      setTimeRemaining(prev => {
-        if (prev <= 1) {
-          nextExercise();
-          return 0;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warm-Up Wizard - Golf Pre-Round Routines</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .golf-green { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
+        .exercise-card { transition: all 0.3s ease; }
+        .exercise-card:hover { transform: translateY(-2px); }
+        .timer-circle { 
+            stroke-dasharray: 283; 
+            stroke-dashoffset: 283;
+            transition: stroke-dashoffset 1s linear;
         }
-        return prev - 1;
-      });
-    }, 1000);
-  }, []);
-  
-  const pauseExercise = useCallback(() => {
-    setIsRunning(false);
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-  }, []);
-  
-  const nextExercise = useCallback(() => {
-    if (currentExerciseIndex < routine.exercises.length - 1) {
-      const nextIndex = currentExerciseIndex + 1;
-      setCurrentExerciseIndex(nextIndex);
-      setCurrentExercise(routine.exercises[nextIndex]);
-      setTimeRemaining(routine.exercises[nextIndex].duration);
-    } else {
-      completeRoutine();
-    }
-  }, [currentExerciseIndex, routine.exercises]);
-  
-  const completeRoutine = useCallback(() => {
-    setIsRunning(false);
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
-    // Handle routine completion
-  }, []);
-  
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-    };
-  }, []);
-  
-  return {
-    currentExercise,
-    timeRemaining,
-    isRunning,
-    currentExerciseIndex,
-    startExercise,
-    pauseExercise,
-    nextExercise,
-    totalExercises: routine.exercises.length
-  };
-};
-```
+        .progress-ring { transform: rotate(-90deg); }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div id="app">
+        <!-- Header -->
+        <header class="golf-green text-white py-6 px-4 shadow-lg">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl md:text-4xl font-bold mb-2">⛳ Warm-Up Wizard</h1>
+                <p class="text-green-100 text-lg">Pro-style warm-ups tailored to your time</p>
+            </div>
+        </header>
 
-## 7. MVP Feature Prioritization
+        <!-- Main Content -->
+        <main class="max-w-4xl mx-auto px-4 py-8">
+            <!-- Home Screen -->
+            <div id="homeScreen" class="fade-in">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-2">⏰ Ready to warm up?</h2>
+                        <p class="text-gray-600">Tell us how much time you have before your tee time</p>
+                    </div>
 
-### Phase 1 (MVP - 6-8 weeks)
-1. **Core Routine Generation**
-   - Basic exercise library (20-30 exercises)
-   - Time-based routine creation
-   - Simple skill level filtering
+                    <!-- Time Selector -->
+                    <div class="bg-gray-50 rounded-xl p-6 mb-6">
+                        <div class="text-center mb-4">
+                            <span id="selectedTime" class="text-4xl font-bold text-green-600">10</span>
+                            <span class="text-2xl text-gray-600 ml-1">minutes</span>
+                        </div>
+                        <div class="flex justify-center items-center gap-4 mb-4">
+                            <button id="decreaseTime" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">- 5min</button>
+                            <input type="range" id="timeSlider" min="5" max="60" value="10" step="5" class="flex-1">
+                            <button id="increaseTime" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">+ 5min</button>
+                        </div>
+                    </div>
 
-2. **Exercise Execution**
-   - Timer functionality
-   - Exercise instructions and descriptions
-   - Basic navigation (next/previous/skip)
+                    <!-- Quick Options -->
+                    <div class="mb-6">
+                        <p class="text-center text-gray-600 mb-3">Quick Options:</p>
+                        <div class="flex flex-wrap justify-center gap-2">
+                            <button class="time-preset bg-gray-200 hover:bg-green-500 hover:text-white px-4 py-2 rounded-lg transition-colors" data-time="5">5min</button>
+                            <button class="time-preset bg-green-500 text-white px-4 py-2 rounded-lg" data-time="10">10min</button>
+                            <button class="time-preset bg-gray-200 hover:bg-green-500 hover:text-white px-4 py-2 rounded-lg transition-colors" data-time="15">15min</button>
+                            <button class="time-preset bg-gray-200 hover:bg-green-500 hover:text-white px-4 py-2 rounded-lg transition-colors" data-time="20">20min</button>
+                            <button class="time-preset bg-gray-200 hover:bg-green-500 hover:text-white px-4 py-2 rounded-lg transition-colors" data-time="30">30min</button>
+                        </div>
+                    </div>
 
-3. **Essential Onboarding**
-   - Skill level selection
-   - Basic preferences setup
+                    <!-- Generate Button -->
+                    <button id="generateRoutine" class="w-full golf-green text-white py-4 rounded-xl text-xl font-semibold hover:scale-105 transition-transform shadow-lg">
+                        Generate My Warm-Up
+                    </button>
+                </div>
 
-### Phase 2 (Enhancement - 4-6 weeks)
-1. **Personalization**
-   - Physical limitations consideration
-   - Course condition inputs
-   - Performance feedback integration
+                <!-- Recent Routines -->
+                <div class="bg-white rounded-2xl shadow-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">📋 Quick Start Templates</h3>
+                    <div class="space-y-3">
+                        <button class="quick-routine w-full text-left p-4 bg-gray-50 hover:bg-green-50 rounded-lg transition-colors" data-time="5">
+                            <div class="font-medium text-gray-800">Ultra-Quick Stretch (5 min)</div>
+                            <div class="text-sm text-gray-600">Essential stretches + 2 practice swings</div>
+                        </button>
+                        <button class="quick-routine w-full text-left p-4 bg-gray-50 hover:bg-green-50 rounded-lg transition-colors" data-time="10">
+                            <div class="font-medium text-gray-800">Morning Power Warm-Up (10 min)</div>
+                            <div class="text-sm text-gray-600">Dynamic stretching + swing prep</div>
+                        </button>
+                        <button class="quick-routine w-full text-left p-4 bg-gray-50 hover:bg-green-50 rounded-lg transition-colors" data-time="20">
+                            <div class="font-medium text-gray-800">Complete Pre-Round Routine (20 min)</div>
+                            <div class="text-sm text-gray-600">Full body prep + short game practice</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-2. **Advanced Features**
-   - Routine customization
-   - Favorite routines
-   - Exercise animations/videos
+            <!-- Routine Display Screen -->
+            <div id="routineScreen" class="fade-in hidden">
+                <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <button id="backToHome" class="text-green-600 hover:text-green-800 font-medium">← Back</button>
+                        <h2 id="routineTitle" class="text-2xl font-bold text-gray-800">Your 10-Minute Power Warm-Up</h2>
+                        <div></div>
+                    </div>
 
-### Phase 3 (Optimization - 4-6 weeks)
-1. **Smart Features**
-   - ML-based routine optimization
-   - Performance correlation tracking
-   - Weather integration
+                    <div id="exerciseList" class="space-y-4 mb-6">
+                        <!-- Exercises will be populated here -->
+                    </div>
 
-2. **Social & Sharing**
-   - Routine sharing
-   - Achievement system
-   - Community features
+                    <button id="startRoutine" class="w-full golf-green text-white py-4 rounded-xl text-xl font-semibold hover:scale-105 transition-transform shadow-lg">
+                        Start Warm-Up
+                    </button>
+                </div>
+            </div>
 
-## 8. Success Metrics & Analytics
+            <!-- Exercise Execution Screen -->
+            <div id="exerciseScreen" class="fade-in hidden">
+                <div class="bg-white rounded-2xl shadow-xl p-6">
+                    <!-- Progress Bar -->
+                    <div class="mb-6">
+                        <div class="flex justify-between text-sm text-gray-600 mb-2">
+                            <span id="exerciseProgress">Exercise 1 of 5</span>
+                            <span id="totalTimeRemaining">8:30 remaining</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div id="progressBar" class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: 20%"></div>
+                        </div>
+                    </div>
 
-### 8.1 Key Performance Indicators
-- **User Engagement:** Daily/Weekly Active Users
-- **Routine Completion Rate:** % of started routines completed
-- **User Retention:** 7-day, 30-day retention rates
-- **Feature Adoption:** % using advanced customization features
-- **User Satisfaction:** In-app feedback ratings, App Store reviews
+                    <!-- Exercise Content -->
+                    <div class="text-center mb-8">
+                        <h2 id="exerciseName" class="text-3xl font-bold text-gray-800 mb-4">Arm Circles</h2>
+                        
+                        <!-- Timer Circle -->
+                        <div class="relative inline-block mb-6">
+                            <svg class="progress-ring w-32 h-32">
+                                <circle cx="64" cy="64" r="45" stroke="#e5e7eb" stroke-width="8" fill="none"/>
+                                <circle id="timerCircle" cx="64" cy="64" r="45" stroke="#22c55e" stroke-width="8" fill="none" class="timer-circle"/>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span id="exerciseTimer" class="text-2xl font-bold text-gray-800">0:30</span>
+                            </div>
+                        </div>
 
-### 8.2 Data Collection Points
-- Routine generation parameters
-- Exercise completion/skip rates
-- Time spent per exercise
-- User feedback on difficulty/effectiveness
-- Correlation with subsequent round performance (optional user input)
+                        <div id="exerciseDescription" class="bg-blue-50 rounded-lg p-4 mb-6 max-w-lg mx-auto">
+                            <p class="text-gray-700">Make large, controlled circles with your arms to warm up your shoulder joints and prepare for your swing.</p>
+                        </div>
+                    </div>
 
-## 9. Future Roadmap Considerations
+                    <!-- Exercise Controls -->
+                    <div class="flex justify-center gap-4">
+                        <button id="pauseExercise" class="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 transition-colors">⏸️ Pause</button>
+                        <button id="skipExercise" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors">⏭️ Skip</button>
+                        <button id="nextExercise" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors">Next ▶️</button>
+                    </div>
+                </div>
+            </div>
 
-### V2 Features
-- **Mobile Apps:** Native iOS/Android apps for enhanced performance
-- **Wearable Integration:** Smartwatch apps for hands-free guidance
-- **Video Content:** Professional instruction videos with 4K quality
-- **AI Coach:** Personalized tips based on performance patterns
-- **Social Features:** Challenge friends, share achievements
-- **Pro Integration:** Content partnerships with PGA professionals
+            <!-- Completion Screen -->
+            <div id="completionScreen" class="fade-in hidden">
+                <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+                    <div class="text-6xl mb-4">🏌️‍♂️</div>
+                    <h2 class="text-3xl font-bold text-green-600 mb-4">You're Ready to Play!</h2>
+                    <p class="text-gray-600 text-lg mb-6">Great job completing your warm-up routine. Your body is now prepared for a great round of golf!</p>
+                    
+                    <div class="flex justify-center gap-4 mb-6">
+                        <button class="feedback-btn bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors" data-feedback="good">
+                            👍 Felt Great
+                        </button>
+                        <button class="feedback-btn bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 transition-colors" data-feedback="okay">
+                            👌 It Was Okay
+                        </button>
+                        <button class="feedback-btn bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-colors" data-feedback="hard">
+                            👎 Too Difficult
+                        </button>
+                    </div>
 
-### V3+ Advanced Features
-- **AR Integration:** WebXR overlay exercise guidance on real environment
-- **Biometric Integration:** Heart rate monitoring via connected devices
-- **GPS Integration:** Location-based course recommendations
-- **Equipment E-commerce:** Recommended warm-up equipment purchasing
-- **Tournament Mode:** Competition-specific warm-up routines
-- **Voice Commands:** Hands-free navigation and control
+                    <button id="startNewRoutine" class="golf-green text-white px-8 py-3 rounded-lg hover:scale-105 transition-transform">
+                        Start Another Routine
+                    </button>
+                </div>
+            </div>
+        </main>
 
-This implementation plan provides a comprehensive foundation for building the Warm-Up Wizard app while maintaining focus on the core value proposition of fast, tailored warm-up routines for golfers.
+        <!-- Footer -->
+        <footer class="text-center py-8 text-gray-500">
+            <p>&copy; 2025 Warm-Up Wizard. Built for golfers who want to play their best.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Exercise database
+        const exercises = {
+            5: [
+                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints." },
+                { name: "Torso Twists", duration: 60, description: "Rotate your torso left and right to loosen your core muscles." },
+                { name: "Practice Swings", duration: 180, description: "Take slow, controlled practice swings focusing on your form." }
+            ],
+            10: [
+                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints." },
+                { name: "Shoulder Rolls", duration: 45, description: "Roll your shoulders forward and backward to release tension." },
+                { name: "Hip Circles", duration: 60, description: "Make circular motions with your hips to improve mobility." },
+                { name: "Leg Swings", duration: 75, description: "Swing each leg forward and back to activate your hip flexors." },
+                { name: "Torso Twists", duration: 60, description: "Rotate your torso left and right to loosen your core muscles." },
+                { name: "Practice Swings", duration: 300, description: "Take slow, controlled practice swings focusing on your tempo and form." }
+            ],
+            15: [
+                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints." },
+                { name: "Shoulder Rolls", duration: 45, description: "Roll your shoulders forward and backward to release tension." },
+                { name: "Hip Circles", duration: 60, description: "Make circular motions with your hips to improve mobility." },
+                { name: "Leg Swings", duration: 90, description: "Swing each leg forward and back, then side to side." },
+                { name: "Torso Twists", duration: 75, description: "Rotate your torso left and right with increasing range of motion." },
+                { name: "Balance Exercise", duration: 90, description: "Stand on one foot for 15 seconds, then switch. Improves stability." },
+                { name: "Practice Swings", duration: 300, description: "Take practice swings at varying speeds, focusing on rhythm." },
+                { name: "Putting Stroke Practice", duration: 180, description: "Practice your putting stroke motion without a ball." }
+            ],
+            20: [
+                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints." },
+                { name: "Shoulder Rolls", duration: 60, description: "Roll your shoulders forward and backward to release tension." },
+                { name: "Hip Circles", duration: 75, description: "Make circular motions with your hips to improve mobility." },
+                { name: "Leg Swings", duration: 90, description: "Swing each leg forward/back, then side to side for full range." },
+                { name: "Torso Twists", duration: 90, description: "Rotate your torso left and right with controlled movement." },
+                { name: "Ankle Rolls", duration: 60, description: "Roll your ankles clockwise and counterclockwise." },
+                { name: "Balance Exercise", duration: 120, description: "Single-leg balance with eyes closed for added challenge." },
+                { name: "Half Swings", duration: 180, description: "Take controlled half swings focusing on club path." },
+                { name: "Practice Swings", duration: 240, description: "Full practice swings with tempo focus." },
+                { name: "Putting Practice", duration: 180, description: "Practice putting stroke and visualization." },
+                { name: "Mental Prep", duration: 135, description: "Take deep breaths and visualize your first few shots." }
+            ],
+            30: [
+                { name: "Arm Circles", duration: 90, description: "Large and small circles to fully warm up shoulders." },
+                { name: "Shoulder Rolls", duration: 60, description: "Forward and backward rolls to release tension." },
+                { name: "Hip Circles", duration: 90, description: "Full range hip circles in both directions." },
+                { name: "Leg Swings", duration: 120, description: "Front/back and side swings for complete hip mobility." },
+                { name: "Torso Twists", duration: 90, description: "Progressive twists with increasing range of motion." },
+                { name: "Ankle Rolls", duration: 60, description: "Full ankle mobility in all directions." },
+                { name: "Balance Challenge", duration: 120, description: "Advanced balance exercises with movement." },
+                { name: "Dynamic Stretching", duration: 180, description: "Walking lunges and leg kicks." },
+                { name: "Half Swings", duration: 240, description: "Controlled half swings focusing on fundamentals." },
+                { name: "Practice Swings", duration: 300, description: "Full swings with rhythm and tempo focus." },
+                { name: "Short Game Practice", duration: 240, description: "Chipping and pitching motion practice." },
+                { name: "Putting Practice", duration: 180, description: "Stroke mechanics and distance control." },
+                { name: "Mental Preparation", duration: 240, description: "Visualization and positive affirmations." }
+            ]
+        };
+
+        // App state
+        let currentRoutine = [];
+        let currentExerciseIndex = 0;
+        let exerciseTimer = null;
+        let timeRemaining = 0;
+        let isPaused = false;
+        let selectedMinutes = 10;
+
+        // DOM elements
+        const homeScreen = document.getElementById('homeScreen');
+        const routineScreen = document.getElementById('routineScreen');
+        const exerciseScreen = document.getElementById('exerciseScreen');
+        const completionScreen = document.getElementById('completionScreen');
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTimeDisplay();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Time selection
+            document.getElementById('timeSlider').addEventListener('input', function(e) {
+                selectedMinutes = parseInt(e.target.value);
+                updateTimeDisplay();
+                updatePresetButtons();
+            });
+
+            document.getElementById('decreaseTime').addEventListener('click', function() {
+                selectedMinutes = Math.max(5, selectedMinutes - 5);
+                updateTimeDisplay();
+                updateSlider();
+                updatePresetButtons();
+            });
+
+            document.getElementById('increaseTime').addEventListener('click', function() {
+                selectedMinutes = Math.min(60, selectedMinutes + 5);
+                updateTimeDisplay();
+                updateSlider();
+                updatePresetButtons();
+            });
+
+            // Quick preset buttons
+            document.querySelectorAll('.time-preset').forEach(button => {
+                button.addEventListener('click', function() {
+                    selectedMinutes = parseInt(this.dataset.time);
+                    updateTimeDisplay();
+                    updateSlider();
+                    updatePresetButtons();
+                });
+            });
+
+            // Quick routine buttons
+            document.querySelectorAll('.quick-routine').forEach(button => {
+                button.addEventListener('click', function() {
+                    selectedMinutes = parseInt(this.dataset.time);
+                    generateRoutine();
+                });
+            });
+
+            // Main buttons
+            document.getElementById('generateRoutine').addEventListener('click', generateRoutine);
+            document.getElementById('startRoutine').addEventListener('click', startExerciseRoutine);
+            document.getElementById('backToHome').addEventListener('click', showHomeScreen);
+            document.getElementById('startNewRoutine').addEventListener('click', showHomeScreen);
+
+            // Exercise controls
+            document.getElementById('pauseExercise').addEventListener('click', togglePause);
+            document.getElementById('skipExercise').addEventListener('click', skipCurrentExercise);
+            document.getElementById('nextExercise').addEventListener('click', nextExercise);
+
+            // Feedback buttons
+            document.querySelectorAll('.feedback-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const feedback = this.dataset.feedback;
+                    // Here you could save feedback to localStorage or send to analytics
+                    console.log('User feedback:', feedback);
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => this.style.transform = 'scale(1)', 150);
+                });
+            });
+        }
+
+        function updateTimeDisplay() {
+            document.getElementById('selectedTime').textContent = selectedMinutes;
+        }
+
+        function updateSlider() {
+            document.getElementById('timeSlider').value = selectedMinutes;
+        }
+
+        function updatePresetButtons() {
+            document.querySelectorAll('.time-preset').forEach(button => {
+                const time = parseInt(button.dataset.time);
+                if (time === selectedMinutes) {
+                    button.classList.add('bg-green-500', 'text-white');
+                    button.classList.remove('bg-gray-200', 'hover:bg-green-500', 'hover:text-white');
+                } else {
+                    button.classList.remove('bg-green-500', 'text-white');
+                    button.classList.add('bg-gray-200', 'hover:bg-green-500', 'hover:text-white');
+                }
+            });
+        }
+
+        function generateRoutine() {
+            // Get the appropriate exercise set
+            let exerciseSet = exercises[selectedMinutes];
+            if (!exerciseSet) {
+                // Find the closest available time
+                const availableTimes = Object.keys(exercises).map(Number).sort((a, b) => a - b);
+                const closestTime = availableTimes.reduce((prev, curr) => 
+                    Math.abs(curr - selectedMinutes) < Math.abs(prev - selectedMinutes) ? curr : prev
+                );
+                exerciseSet = exercises[closestTime];
+            }
+
+            currentRoutine = [...exerciseSet];
+            displayRoutine();
+            showRoutineScreen();
+        }
+
+        function displayRoutine() {
+            const exerciseList = document.getElementById('exerciseList');
+            const routineTitle = document.getElementById('routineTitle');
+            
+            routineTitle.textContent = `Your ${selectedMinutes}-Minute ${getRoutineName(selectedMinutes)}`;
+            
+            exerciseList.innerHTML = '';
+            currentRoutine.forEach((exercise, index) => {
+                const exerciseDiv = document.createElement('div');
+                exerciseDiv.className = 'exercise-card bg-gray-50 p-4 rounded-lg border-l-4 border-green-500';
+                exerciseDiv.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-800">${index + 1}. ${exercise.name}</h4>
+                            <p class="text-sm text-gray-600 mt-1">${exercise.description}</p>
+                        </div>
+                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm ml-4">
+                            ${formatTime(exercise.duration)}
+                        </span>
+                    </div>
+                `;
+                exerciseList.appendChild(exerciseDiv);
+            });
+        }
+
+        function getRoutineName(minutes) {
+            if (minutes <= 5) return 'Quick Stretch';
+            if (minutes <= 10) return 'Power Warm-Up';
+            if (minutes <= 15) return 'Complete Prep';
+            if (minutes <= 20) return 'Pro Routine';
+            return 'Championship Warm-Up';
+        }
+
+        function startExerciseRoutine() {
+            currentExerciseIndex = 0;
+            showExerciseScreen();
+            startCurrentExercise();
+        }
+
+        function startCurrentExercise() {
+            if (currentExerciseIndex >= currentRoutine.length) {
+                showCompletionScreen();
+                return;
+            }
+
+            const exercise = currentRoutine[currentExerciseIndex];
+            timeRemaining = exercise.duration;
+            
+            // Update display
+            document.getElementById('exerciseName').textContent = exercise.name;
+            document.getElementById('exerciseDescription').querySelector('p').textContent = exercise.description;
+            document.getElementById('exerciseProgress').textContent = `Exercise ${currentExerciseIndex + 1} of ${currentRoutine.length}`;
+            
+            updateTimerDisplay();
+            updateProgressBar();
+            updateTotalTimeRemaining();
+            
+            // Start timer
+            isPaused = false;
+            exerciseTimer = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            if (isPaused) return;
+            
+            timeRemaining--;
+            updateTimerDisplay();
+            updateTimerCircle();
+            
+            if (timeRemaining <= 0) {
+                clearInterval(exerciseTimer);
+                nextExercise();
+            }
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('exerciseTimer').textContent = formatTime(timeRemaining);
+        }
+
+        function updateTimerCircle() {
+            const circle = document.getElementById('timerCircle');
+            const exercise = currentRoutine[currentExerciseIndex];
+            const progress = (exercise.duration - timeRemaining) / exercise.duration;
+            const circumference = 2 * Math.PI * 45;
+            const offset = circumference * (1 - progress);
+            circle.style.strokeDashoffset = offset;
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentExerciseIndex + 1) / currentRoutine.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        function updateTotalTimeRemaining() {
+            let totalRemaining = timeRemaining;
+            for (let i = currentExerciseIndex + 1; i < currentRoutine.length; i++) {
+                totalRemaining += currentRoutine[i].duration;
+            }
+            document.getElementById('totalTimeRemaining').textContent = formatTime(totalRemaining) + ' remaining';
+        }
+
+        function nextExercise() {
+            clearInterval(exerciseTimer);
+            currentExerciseIndex++;
+            
+            if (currentExerciseIndex >= currentRoutine.length) {
+                showCompletionScreen();
+            } else {
+                startCurrentExercise();
+            }
+        }
+
+        function skipCurrentExercise() {
+            clearInterval(exerciseTimer);
+            nextExercise();
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            const button = document.getElementById('pauseExercise');
+            button.textContent = isPaused ? '▶️ Resume' : '⏸️ Pause';
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Screen navigation
+        function showHomeScreen() {
+            homeScreen.classList.remove('hidden');
+            routineScreen.classList.add('hidden');
+            exerciseScreen.classList.add('hidden');
+            completionScreen.classList.add('hidden');
+            clearInterval(exerciseTimer);
+        }
+
+        function showRoutineScreen() {
+            homeScreen.classList.add('hidden');
+            routineScreen.classList.remove('hidden');
+            exerciseScreen.classList.add('hidden');
+            completionScreen.classList.add('hidden');
+        }
+
+        function showExerciseScreen() {
+            homeScreen.classList.add('hidden');
+            routineScreen.classList.add('hidden');
+            exerciseScreen.classList.remove('hidden');
+            completionScreen.classList.add('hidden');
+        }
+
+        function showCompletionScreen() {
+            homeScreen.classList.add('hidden');
+            routineScreen.classList.add('hidden');
+            exerciseScreen.classList.add('hidden');
+            completionScreen.classList.remove('hidden');
+            clearInterval(exerciseTimer);
+        }
+    </script>
+</body>
+</html>
