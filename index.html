@@ -5,764 +5,222 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Warm-Up Wizard - Golf Pre-Round Routines</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f8fafc;
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 16px;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            color: white;
-            padding: 32px 16px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        /* Cards */
-        .card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            padding: 32px;
-            margin: 32px 0;
-        }
-
-        .card h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        .card .subtitle {
-            color: #6b7280;
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        /* Time Selector */
-        .time-display {
-            background: #f1f5f9;
-            border-radius: 12px;
-            padding: 24px;
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .time-number {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #16a34a;
-            display: inline;
-        }
-
-        .time-unit {
-            font-size: 1.5rem;
-            color: #6b7280;
-            margin-left: 8px;
-        }
-
-        .time-controls {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin: 16px 0;
-            justify-content: center;
-        }
-
-        .time-btn {
-            background: #22c55e;
-            color: white;
-            border: none;
-            padding: 12px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-
-        .time-btn:hover {
-            background: #16a34a;
-        }
-
-        .time-slider {
-            flex: 1;
-            margin: 0 16px;
-            -webkit-appearance: none;
-            appearance: none;
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            outline: none;
-        }
-
-        .time-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            background: #22c55e;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .time-slider::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            background: #22c55e;
-            border-radius: 50%;
-            cursor: pointer;
-            border: none;
-        }
-
-        /* Quick Options */
-        .quick-options {
-            margin-bottom: 24px;
-        }
-
-        .quick-options p {
-            text-align: center;
-            color: #6b7280;
-            margin-bottom: 12px;
-        }
-
-        .preset-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .preset-btn {
-            background: #e2e8f0;
-            border: none;
-            padding: 12px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .preset-btn:hover {
-            background: #22c55e;
-            color: white;
-        }
-
-        .preset-btn.active {
-            background: #22c55e;
-            color: white;
-        }
-
-        /* Main Button */
-        .main-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            color: white;
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 1.25rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-            box-shadow: 0 4px 14px rgba(34, 197, 94, 0.3);
-        }
-
-        .main-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        /* Quick Routines */
-        .routine-list {
-            margin-top: 16px;
-        }
-
-        .routine-item {
-            width: 100%;
-            background: #f8fafc;
-            border: none;
-            padding: 16px;
-            border-radius: 8px;
-            text-align: left;
-            cursor: pointer;
-            margin-bottom: 12px;
-            transition: background-color 0.2s;
-        }
-
-        .routine-item:hover {
-            background: #ecfdf5;
-        }
-
-        .routine-title {
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 4px;
-        }
-
-        .routine-desc {
-            font-size: 0.9rem;
-            color: #6b7280;
-        }
-
-        /* Exercise List */
-        .exercise-list {
-            margin-bottom: 24px;
-        }
-
-        .exercise-item {
-            background: #f8fafc;
-            padding: 16px;
-            border-radius: 8px;
-            border-left: 4px solid #22c55e;
-            margin-bottom: 16px;
-            transition: transform 0.2s;
-        }
-
-        .exercise-item:hover {
-            transform: translateY(-1px);
-        }
-
-        .exercise-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .exercise-content {
-            flex: 1;
-        }
-
-        .exercise-name {
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 4px;
-        }
-
-        .exercise-desc {
-            font-size: 0.9rem;
-            color: #6b7280;
-        }
-
-        .exercise-time {
-            background: #dcfce7;
-            color: #166534;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-left: 16px;
-            white-space: nowrap;
-        }
-
-        /* Exercise Screen */
-        .exercise-screen {
-            text-align: center;
-        }
-
-        .progress-section {
-            margin-bottom: 24px;
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            color: #6b7280;
-            margin-bottom: 8px;
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: #22c55e;
-            transition: width 0.3s;
-        }
-
-        .exercise-title {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #1f2937;
-            margin-bottom: 24px;
-        }
-
-        .timer-section {
-            margin-bottom: 24px;
-        }
-
-        .timer-circle {
-            width: 120px;
-            height: 120px;
-            border: 8px solid #e2e8f0;
-            border-top: 8px solid #22c55e;
-            border-radius: 50%;
-            margin: 0 auto 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #1f2937;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .timer-circle.paused {
-            animation-play-state: paused;
-        }
-
-        /* Video Container */
-        .video-container {
-            margin: 16px 0 24px 0;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .video-wrapper {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
-            height: 0;
-            overflow: hidden;
-        }
-
-        .video-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .control-btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .pause-btn {
-            background: #fbbf24;
-            color: white;
-        }
-
-        .pause-btn:hover {
-            background: #f59e0b;
-        }
-
-        .skip-btn {
-            background: #6b7280;
-            color: white;
-        }
-
-        .skip-btn:hover {
-            background: #4b5563;
-        }
-
-        .next-btn {
-            background: #22c55e;
-            color: white;
-        }
-
-        .next-btn:hover {
-            background: #16a34a;
-        }
-
-        /* Completion Screen */
-        .completion-icon {
-            font-size: 4rem;
-            margin-bottom: 16px;
-        }
-
-        .completion-title {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #16a34a;
-            margin-bottom: 16px;
-        }
-
-        .completion-text {
-            color: #6b7280;
-            font-size: 1.1rem;
-            margin-bottom: 24px;
-        }
-
-        .feedback-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-
-        .feedback-btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-            color: white;
-        }
-
-        .feedback-good {
-            background: #22c55e;
-        }
-
-        .feedback-good:hover {
-            background: #16a34a;
-        }
-
-        .feedback-okay {
-            background: #fbbf24;
-        }
-
-        .feedback-okay:hover {
-            background: #f59e0b;
-        }
-
-        .feedback-hard {
-            background: #ef4444;
-        }
-
-        .feedback-hard:hover {
-            background: #dc2626;
-        }
-
-        /* Navigation */
-        .back-btn {
-            color: #16a34a;
-            text-decoration: none;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .back-btn:hover {
-            color: #15803d;
-        }
-
-        .screen-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-        }
-
-        /* Utility Classes */
-        .hidden {
-            display: none !important;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 32px;
-            color: #6b7280;
-        }
-
-        /* Responsive */
-        @media (max-width: 640px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .card {
-                padding: 24px;
-                margin: 16px 0;
-            }
-
-            .time-number {
-                font-size: 2.5rem;
-            }
-
-            .exercise-title {
-                font-size: 1.5rem;
-            }
-
-            .controls {
-                gap: 8px;
-            }
-
-            .control-btn {
-                padding: 10px 16px;
-                font-size: 0.9rem;
-            }
-
-            .feedback-buttons {
-                gap: 8px;
-            }
-
-            .feedback-btn {
-                padding: 10px 16px;
-                font-size: 0.9rem;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; background: #f8fafc; min-height: 100vh; }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 16px; }
+        .header { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 32px 16px; text-align: center; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 8px; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); padding: 32px; margin: 32px 0; }
+        .time-display { background: #f1f5f9; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 24px; }
+        .time-number { font-size: 3rem; font-weight: bold; color: #16a34a; }
+        .time-unit { font-size: 1.5rem; color: #6b7280; margin-left: 8px; }
+        .time-controls { display: flex; align-items: center; gap: 16px; margin: 16px 0; justify-content: center; }
+        .time-btn { background: #22c55e; color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; }
+        .time-slider { flex: 1; margin: 0 16px; height: 8px; background: #e2e8f0; border-radius: 4px; outline: none; -webkit-appearance: none; }
+        .preset-buttons { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .preset-btn { background: #e2e8f0; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; }
+        .preset-btn.active, .preset-btn:hover { background: #22c55e; color: white; }
+        .main-btn { width: 100%; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 1.25rem; cursor: pointer; }
+        .routine-item { width: 100%; background: #f8fafc; border: none; padding: 16px; border-radius: 8px; text-align: left; cursor: pointer; margin-bottom: 12px; }
+        .routine-item:hover { background: #ecfdf5; }
+        .exercise-item { background: #f8fafc; padding: 16px; border-radius: 8px; border-left: 4px solid #22c55e; margin-bottom: 16px; }
+        .exercise-header { display: flex; justify-content: space-between; }
+        .exercise-time { background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; }
+        .hidden { display: none !important; }
+        .back-btn { color: #16a34a; text-decoration: none; cursor: pointer; }
+        .screen-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+        .exercise-title { font-size: 2rem; font-weight: bold; text-align: center; margin-bottom: 24px; }
+        .timer-circle { width: 120px; height: 120px; border: 8px solid #e2e8f0; border-top: 8px solid #22c55e; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; }
+        .video-container { margin: 16px 0; border-radius: 12px; overflow: hidden; }
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .controls { display: flex; justify-content: center; gap: 16px; margin-top: 24px; }
+        .control-btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; color: white; }
+        .pause-btn { background: #fbbf24; }
+        .skip-btn { background: #6b7280; }
+        .next-btn { background: #22c55e; }
+        .progress-bar-bg { width: 100%; height: 8px; background: #e2e8f0; border-radius: 4px; margin-bottom: 24px; }
+        .progress-bar { height: 100%; background: #22c55e; transition: width 0.3s; }
+        .feedback-buttons { display: flex; justify-content: center; gap: 16px; margin: 24px 0; }
+        .feedback-btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; color: white; }
+        .feedback-good { background: #22c55e; }
+        .feedback-okay { background: #fbbf24; }
+        .feedback-hard { background: #ef4444; }
+        .completion-icon { font-size: 4rem; text-align: center; margin-bottom: 16px; }
+        .completion-title { font-size: 2rem; font-weight: bold; color: #16a34a; text-align: center; margin-bottom: 16px; }
     </style>
 </head>
 <body>
-    <div id="app">
-        <!-- Header -->
-        <header class="header">
-            <div class="container">
-                <h1>⛳ Warm-Up Wizard</h1>
-                <p>Pro-style warm-ups tailored to your time</p>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1>⛳ Warm-Up Wizard</h1>
+            <p>Pro-style warm-ups tailored to your time</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Home Screen -->
+        <div id="homeScreen">
+            <div class="card">
+                <h2 style="text-align: center; margin-bottom: 32px;">⏰ Ready to warm up?</h2>
+                
+                <div class="time-display">
+                    <span id="selectedTime" class="time-number">10</span>
+                    <span class="time-unit">minutes</span>
+                    <div class="time-controls">
+                        <button id="decreaseTime" class="time-btn">- 5min</button>
+                        <input type="range" id="timeSlider" class="time-slider" min="5" max="60" value="10" step="5">
+                        <button id="increaseTime" class="time-btn">+ 5min</button>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 24px;">
+                    <p style="text-align: center; margin-bottom: 12px;">Quick Options:</p>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-time="5">5min</button>
+                        <button class="preset-btn active" data-time="10">10min</button>
+                        <button class="preset-btn" data-time="15">15min</button>
+                        <button class="preset-btn" data-time="20">20min</button>
+                        <button class="preset-btn" data-time="30">30min</button>
+                    </div>
+                </div>
+
+                <button id="generateRoutine" class="main-btn">Generate My Warm-Up</button>
             </div>
-        </header>
 
-        <!-- Main Content -->
-        <main class="container">
-            <!-- Home Screen -->
-            <div id="homeScreen">
-                <div class="card">
-                    <h2>⏰ Ready to warm up?</h2>
-                    <p class="subtitle">Tell us how much time you have before your tee time</p>
-
-                    <!-- Time Selector -->
-                    <div class="time-display">
-                        <span id="selectedTime" class="time-number">10</span>
-                        <span class="time-unit">minutes</span>
-                        <div class="time-controls">
-                            <button id="decreaseTime" class="time-btn">- 5min</button>
-                            <input type="range" id="timeSlider" class="time-slider" min="5" max="60" value="10" step="5">
-                            <button id="increaseTime" class="time-btn">+ 5min</button>
-                        </div>
-                    </div>
-
-                    <!-- Quick Options -->
-                    <div class="quick-options">
-                        <p>Quick Options:</p>
-                        <div class="preset-buttons">
-                            <button class="preset-btn" data-time="5">5min</button>
-                            <button class="preset-btn active" data-time="10">10min</button>
-                            <button class="preset-btn" data-time="15">15min</button>
-                            <button class="preset-btn" data-time="20">20min</button>
-                            <button class="preset-btn" data-time="30">30min</button>
-                        </div>
-                    </div>
-
-                    <!-- Generate Button -->
-                    <button id="generateRoutine" class="main-btn">
-                        Generate My Warm-Up
+            <div class="card">
+                <h3>📋 Quick Start Templates</h3>
+                <div style="margin-top: 16px;">
+                    <button class="routine-item" data-time="5">
+                        <div style="font-weight: 600; margin-bottom: 4px;">Ultra-Quick Stretch (5 min)</div>
+                        <div style="color: #6b7280; font-size: 0.9rem;">Essential stretches + practice swings</div>
                     </button>
-                </div>
-
-                <!-- Recent Routines -->
-                <div class="card">
-                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 16px;">📋 Quick Start Templates</h3>
-                    <div class="routine-list">
-                        <button class="routine-item" data-time="5">
-                            <div class="routine-title">Ultra-Quick Stretch (5 min)</div>
-                            <div class="routine-desc">Essential stretches + 2 practice swings</div>
-                        </button>
-                        <button class="routine-item" data-time="10">
-                            <div class="routine-title">Morning Power Warm-Up (10 min)</div>
-                            <div class="routine-desc">Dynamic stretching + swing prep</div>
-                        </button>
-                        <button class="routine-item" data-time="20">
-                            <div class="routine-title">Complete Pre-Round Routine (20 min)</div>
-                            <div class="routine-desc">Full body prep + short game practice</div>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Routine Display Screen -->
-            <div id="routineScreen" class="hidden">
-                <div class="card">
-                    <div class="screen-header">
-                        <button id="backToHome" class="back-btn">← Back</button>
-                        <h2 id="routineTitle" style="margin: 0;">Your 10-Minute Power Warm-Up</h2>
-                        <div></div>
-                    </div>
-
-                    <div id="exerciseList" class="exercise-list">
-                        <!-- Exercises will be populated here -->
-                    </div>
-
-                    <button id="startRoutine" class="main-btn">
-                        Start Warm-Up
+                    <button class="routine-item" data-time="10">
+                        <div style="font-weight: 600; margin-bottom: 4px;">Morning Power Warm-Up (10 min)</div>
+                        <div style="color: #6b7280; font-size: 0.9rem;">Dynamic stretching + swing prep</div>
+                    </button>
+                    <button class="routine-item" data-time="20">
+                        <div style="font-weight: 600; margin-bottom: 4px;">Complete Pre-Round Routine (20 min)</div>
+                        <div style="color: #6b7280; font-size: 0.9rem;">Full body prep + short game practice</div>
                     </button>
                 </div>
             </div>
+        </div>
 
-            <!-- Exercise Execution Screen -->
-            <div id="exerciseScreen" class="hidden">
-                <div class="card exercise-screen">
-                    <!-- Progress Bar -->
-                    <div class="progress-section">
-                        <div class="progress-info">
-                            <span id="exerciseProgress">Exercise 1 of 5</span>
-                            <span id="totalTimeRemaining">8:30 remaining</span>
-                        </div>
-                        <div class="progress-bar-bg">
-                            <div id="progressBar" class="progress-bar" style="width: 20%"></div>
-                        </div>
-                    </div>
+        <!-- Routine Screen -->
+        <div id="routineScreen" class="hidden">
+            <div class="card">
+                <div class="screen-header">
+                    <button id="backToHome" class="back-btn">← Back</button>
+                    <h2 id="routineTitle">Your Warm-Up</h2>
+                    <div></div>
+                </div>
+                <div id="exerciseList"></div>
+                <button id="startRoutine" class="main-btn">Start Warm-Up</button>
+            </div>
+        </div>
 
-                    <!-- Exercise Content -->
-                    <h2 id="exerciseName" class="exercise-title">Arm Circles</h2>
-                    
-                    <!-- Timer -->
-                    <div class="timer-section">
-                        <div id="timerCircle" class="timer-circle">
-                            <span id="exerciseTimer">0:30</span>
-                        </div>
-                    </div>
-
-                    <!-- Video -->
-                    <div id="exerciseVideo" class="video-container">
-                        <!-- YouTube video will be embedded here -->
-                    </div>
-
-                    <div id="exerciseDescription" class="exercise-instruction">
-                        <p>Make large, controlled circles with your arms to warm up your shoulder joints and prepare for your swing.</p>
-                    </div>
-
-                    <!-- Exercise Controls -->
-                    <div class="controls">
-                        <button id="pauseExercise" class="control-btn pause-btn">⏸ Pause</button>
-                        <button id="skipExercise" class="control-btn skip-btn">⏭ Skip</button>
-                        <button id="nextExercise" class="control-btn next-btn">Next ▶</button>
+        <!-- Exercise Screen -->
+        <div id="exerciseScreen" class="hidden">
+            <div class="card">
+                <div class="progress-bar-bg">
+                    <div id="progressBar" class="progress-bar" style="width: 20%"></div>
+                </div>
+                
+                <h2 id="exerciseName" class="exercise-title">Exercise Name</h2>
+                
+                <div style="text-align: center;">
+                    <div id="timerCircle" class="timer-circle">
+                        <span id="exerciseTimer">0:30</span>
                     </div>
                 </div>
-            </div>
 
-            <!-- Completion Screen -->
-            <div id="completionScreen" class="hidden">
-                <div class="card text-center">
-                    <div class="completion-icon">🏌️‍♂️</div>
-                    <h2 class="completion-title">You're Ready to Play!</h2>
-                    <p class="completion-text">Great job completing your warm-up routine. Your body is now prepared for a great round of golf!</p>
-                    
-                    <div class="feedback-buttons">
-                        <button class="feedback-btn feedback-good" data-feedback="good">
-                            👍 Felt Great
-                        </button>
-                        <button class="feedback-btn feedback-okay" data-feedback="okay">
-                            👌 It Was Okay
-                        </button>
-                        <button class="feedback-btn feedback-hard" data-feedback="hard">
-                            👎 Too Difficult
-                        </button>
-                    </div>
+                <div id="exerciseVideo" class="video-container"></div>
 
-                    <button id="startNewRoutine" class="main-btn">
-                        Start Another Routine
-                    </button>
+                <div style="text-align: center; background: #dbeafe; padding: 16px; border-radius: 8px; margin: 16px 0;">
+                    <p id="exerciseDescription">Exercise description goes here</p>
+                </div>
+
+                <div class="controls">
+                    <button id="pauseExercise" class="control-btn pause-btn">⏸ Pause</button>
+                    <button id="skipExercise" class="control-btn skip-btn">⏭ Skip</button>
+                    <button id="nextExercise" class="control-btn next-btn">Next ▶</button>
                 </div>
             </div>
-        </main>
+        </div>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <p>&copy; 2025 Warm-Up Wizard. Built for golfers who want to play their best.</p>
-        </footer>
-    </div>
+        <!-- Completion Screen -->
+        <div id="completionScreen" class="hidden">
+            <div class="card">
+                <div class="completion-icon">🏌️‍♂️</div>
+                <h2 class="completion-title">You're Ready to Play!</h2>
+                <p style="text-align: center; color: #6b7280; margin-bottom: 24px;">Great job completing your warm-up routine!</p>
+                
+                <div class="feedback-buttons">
+                    <button class="feedback-btn feedback-good" data-feedback="good">👍 Felt Great</button>
+                    <button class="feedback-btn feedback-okay" data-feedback="okay">👌 It Was Okay</button>
+                    <button class="feedback-btn feedback-hard" data-feedback="hard">👎 Too Difficult</button>
+                </div>
+
+                <button id="startNewRoutine" class="main-btn">Start Another Routine</button>
+            </div>
+        </div>
+    </main>
 
     <script>
-        // Exercise database with YouTube videos
+        // Exercise database
         const exercises = {
             5: [
-                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints.", videoId: "pLZUNE6PBBo" },
-                { name: "Torso Twists", duration: 60, description: "Rotate your torso left and right to loosen your core muscles.", videoId: "N5VXfKKjz1E" },
-                { name: "Practice Swings", duration: 180, description: "Take slow, controlled practice swings focusing on your form.", videoId: "gAySCm5w1EM" }
+                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms.", videoId: "pLZUNE6PBBo" },
+                { name: "Torso Twists", duration: 60, description: "Rotate your torso left and right.", videoId: "N5VXfKKjz1E" },
+                { name: "Practice Swings", duration: 180, description: "Take slow, controlled practice swings.", videoId: "gAySCm5w1EM" }
             ],
             10: [
-                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints.", videoId: "pLZUNE6PBBo" },
-                { name: "Shoulder Rolls", duration: 45, description: "Roll your shoulders forward and backward to release tension.", videoId: "wQJKaVtB14Q" },
-                { name: "Hip Circles", duration: 60, description: "Make circular motions with your hips to improve mobility.", videoId: "yCwlw04uN7w" },
-                { name: "Leg Swings", duration: 75, description: "Swing each leg forward and back to activate your hip flexors.", videoId: "h2Zx7bOjGXY" },
-                { name: "Torso Twists", duration: 60, description: "Rotate your torso left and right to loosen your core muscles.", videoId: "N5VXfKKjz1E" },
-                { name: "Practice Swings", duration: 300, description: "Take slow, controlled practice swings focusing on your tempo and form.", videoId: "gAySCm5w1EM" }
+                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms.", videoId: "pLZUNE6PBBo" },
+                { name: "Shoulder Rolls", duration: 45, description: "Roll your shoulders forward and backward.", videoId: "wQJKaVtB14Q" },
+                { name: "Hip Circles", duration: 60, description: "Make circular motions with your hips.", videoId: "yCwlw04uN7w" },
+                { name: "Leg Swings", duration: 75, description: "Swing each leg forward and back.", videoId: "h2Zx7bOjGXY" },
+                { name: "Torso Twists", duration: 60, description: "Rotate your torso left and right.", videoId: "N5VXfKKjz1E" },
+                { name: "Practice Swings", duration: 300, description: "Take practice swings focusing on tempo.", videoId: "gAySCm5w1EM" }
             ],
             15: [
-                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints.", videoId: "pLZUNE6PBBo" },
-                { name: "Shoulder Rolls", duration: 45, description: "Roll your shoulders forward and backward to release tension.", videoId: "wQJKaVtB14Q" },
-                { name: "Hip Circles", duration: 60, description: "Make circular motions with your hips to improve mobility.", videoId: "yCwlw04uN7w" },
-                { name: "Leg Swings", duration: 90, description: "Swing each leg forward and back, then side to side.", videoId: "h2Zx7bOjGXY" },
-                { name: "Torso Twists", duration: 75, description: "Rotate your torso left and right with increasing range of motion.", videoId: "N5VXfKKjz1E" },
-                { name: "Balance Exercise", duration: 90, description: "Stand on one foot for 15 seconds, then switch. Improves stability.", videoId: "eqAP4GkFKRI" },
-                { name: "Practice Swings", duration: 300, description: "Take practice swings at varying speeds, focusing on rhythm.", videoId: "gAySCm5w1EM" },
-                { name: "Putting Stroke Practice", duration: 180, description: "Practice your putting stroke motion without a ball.", videoId: "Hp6w0hgGpR4" }
+                { name: "Arm Circles", duration: 60, description: "Warm up your shoulder joints.", videoId: "pLZUNE6PBBo" },
+                { name: "Shoulder Rolls", duration: 45, description: "Release shoulder tension.", videoId: "wQJKaVtB14Q" },
+                { name: "Hip Circles", duration: 60, description: "Improve hip mobility.", videoId: "yCwlw04uN7w" },
+                { name: "Leg Swings", duration: 90, description: "Dynamic leg stretching.", videoId: "h2Zx7bOjGXY" },
+                { name: "Torso Twists", duration: 75, description: "Loosen your core muscles.", videoId: "N5VXfKKjz1E" },
+                { name: "Balance Exercise", duration: 90, description: "Improve stability and balance.", videoId: "eqAP4GkFKRI" },
+                { name: "Practice Swings", duration: 300, description: "Focus on rhythm and tempo.", videoId: "gAySCm5w1EM" },
+                { name: "Putting Practice", duration: 180, description: "Practice putting stroke motion.", videoId: "Hp6w0hgGpR4" }
             ],
             20: [
-                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms to warm up your shoulder joints.", videoId: "pLZUNE6PBBo" },
-                { name: "Shoulder Rolls", duration: 60, description: "Roll your shoulders forward and backward to release tension.", videoId: "wQJKaVtB14Q" },
-                { name: "Hip Circles", duration: 75, description: "Make circular motions with your hips to improve mobility.", videoId: "yCwlw04uN7w" },
-                { name: "Leg Swings", duration: 90, description: "Swing each leg forward/back, then side to side for full range.", videoId: "h2Zx7bOjGXY" },
-                { name: "Torso Twists", duration: 90, description: "Rotate your torso left and right with controlled movement.", videoId: "N5VXfKKjz1E" },
-                { name: "Ankle Rolls", duration: 60, description: "Roll your ankles clockwise and counterclockwise.", videoId: "IYkVJIlCsNg" },
-                { name: "Balance Exercise", duration: 120, description: "Single-leg balance with eyes closed for added challenge.", videoId: "eqAP4GkFKRI" },
-                { name: "Half Swings", duration: 180, description: "Take controlled half swings focusing on club path.", videoId: "aVFAH6rh5vw" },
-                { name: "Practice Swings", duration: 240, description: "Full practice swings with tempo focus.", videoId: "gAySCm5w1EM" },
-                { name: "Putting Practice", duration: 180, description: "Practice putting stroke and visualization.", videoId: "Hp6w0hgGpR4" },
-                { name: "Mental Prep", duration: 135, description: "Take deep breaths and visualize your first few shots.", videoId: "kCGe_aBKYQw" }
+                { name: "Arm Circles", duration: 60, description: "Warm up shoulder joints.", videoId: "pLZUNE6PBBo" },
+                { name: "Shoulder Rolls", duration: 60, description: "Release tension.", videoId: "wQJKaVtB14Q" },
+                { name: "Hip Circles", duration: 75, description: "Hip mobility work.", videoId: "yCwlw04uN7w" },
+                { name: "Leg Swings", duration: 90, description: "Full range leg movement.", videoId: "h2Zx7bOjGXY" },
+                { name: "Torso Twists", duration: 90, description: "Core preparation.", videoId: "N5VXfKKjz1E" },
+                { name: "Ankle Rolls", duration: 60, description: "Ankle mobility.", videoId: "IYkVJIlCsNg" },
+                { name: "Balance Exercise", duration: 120, description: "Advanced balance work.", videoId: "eqAP4GkFKRI" },
+                { name: "Half Swings", duration: 180, description: "Controlled swing practice.", videoId: "aVFAH6rh5vw" },
+                { name: "Practice Swings", duration: 240, description: "Full swing preparation.", videoId: "gAySCm5w1EM" },
+                { name: "Putting Practice", duration: 180, description: "Putting fundamentals.", videoId: "Hp6w0hgGpR4" },
+                { name: "Mental Prep", duration: 135, description: "Visualization and breathing.", videoId: "kCGe_aBKYQw" }
             ],
             30: [
-                { name: "Arm Circles", duration: 90, description: "Large and small circles to fully warm up shoulders.", videoId: "pLZUNE6PBBo" },
-                { name: "Shoulder Rolls", duration: 60, description: "Forward and backward rolls to release tension.", videoId: "wQJKaVtB14Q" },
-                { name: "Hip Circles", duration: 90, description: "Full range hip circles in both directions.", videoId: "yCwlw04uN7w" },
-                { name: "Leg Swings", duration: 120, description: "Front/back and side swings for complete hip mobility.", videoId: "h2Zx7bOjGXY" },
-                { name: "Torso Twists", duration: 90, description: "Progressive twists with increasing range of motion.", videoId: "N5VXfKKjz1E" },
-                { name: "Ankle Rolls", duration: 60, description: "Full ankle mobility in all directions.", videoId: "IYkVJIlCsNg" },
-                { name: "Balance Challenge", duration: 120, description: "Advanced balance exercises with movement.", videoId: "eqAP4GkFKRI" },
-                { name: "Dynamic Stretching", duration: 180, description: "Walking lunges and leg kicks.", videoId: "yPM3U8oCYco" },
-                { name: "Half Swings", duration: 240, description: "Controlled half swings focusing on fundamentals.", videoId: "aVFAH6rh5vw" },
-                { name: "Practice Swings", duration: 300, description: "Full swings with rhythm and tempo focus.", videoId: "gAySCm5w1EM" },
-                { name: "Short Game Practice", duration: 240, description: "Chipping and pitching motion practice.", videoId: "EG1p5O25YTQ" },
-                { name: "Putting Practice", duration: 180, description: "Stroke mechanics and distance control.", videoId: "Hp6w0hgGpR4" },
-                { name: "Mental Preparation", duration: 240, description: "Visualization and positive affirmations.", videoId: "kCGe_aBKYQw" }
+                { name: "Arm Circles", duration: 90, description: "Complete shoulder warm-up.", videoId: "pLZUNE6PBBo" },
+                { name: "Shoulder Rolls", duration: 60, description: "Tension release.", videoId: "wQJKaVtB14Q" },
+                { name: "Hip Circles", duration: 90, description: "Full hip mobility.", videoId: "yCwlw04uN7w" },
+                { name: "Leg Swings", duration: 120, description: "Complete hip mobility.", videoId: "h2Zx7bOjGXY" },
+                { name: "Torso Twists", duration: 90, description: "Progressive core work.", videoId: "N5VXfKKjz1E" },
+                { name: "Ankle Rolls", duration: 60, description: "Full ankle mobility.", videoId: "IYkVJIlCsNg" },
+                { name: "Balance Challenge", duration: 120, description: "Advanced balance exercises.", videoId: "eqAP4GkFKRI" },
+                { name: "Dynamic Stretching", duration: 180, description: "Walking lunges and kicks.", videoId: "yPM3U8oCYco" },
+                { name: "Half Swings", duration: 240, description: "Swing fundamentals.", videoId: "aVFAH6rh5vw" },
+                { name: "Practice Swings", duration: 300, description: "Full swing rhythm.", videoId: "gAySCm5w1EM" },
+                { name: "Short Game Practice", duration: 240, description: "Chipping and pitching.", videoId: "EG1p5O25YTQ" },
+                { name: "Putting Practice", duration: 180, description: "Stroke mechanics.", videoId: "Hp6w0hgGpR4" },
+                { name: "Mental Preparation", duration: 240, description: "Visualization techniques.", videoId: "kCGe_aBKYQw" }
             ]
         };
 
@@ -774,20 +232,14 @@
         let isPaused = false;
         let selectedMinutes = 10;
 
-        // DOM elements
-        const homeScreen = document.getElementById('homeScreen');
-        const routineScreen = document.getElementById('routineScreen');
-        const exerciseScreen = document.getElementById('exerciseScreen');
-        const completionScreen = document.getElementById('completionScreen');
-
-        // Initialize app
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            updateTimeDisplay();
             setupEventListeners();
+            updateTimeDisplay();
         });
 
         function setupEventListeners() {
-            // Time selection
+            // Time controls
             document.getElementById('timeSlider').addEventListener('input', function(e) {
                 selectedMinutes = parseInt(e.target.value);
                 updateTimeDisplay();
@@ -808,7 +260,7 @@
                 updatePresetButtons();
             });
 
-            // Quick preset buttons
+            // Preset buttons
             document.querySelectorAll('.preset-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     selectedMinutes = parseInt(this.dataset.time);
@@ -818,7 +270,7 @@
                 });
             });
 
-            // Quick routine buttons
+            // Quick routines
             document.querySelectorAll('.routine-item').forEach(button => {
                 button.addEventListener('click', function() {
                     selectedMinutes = parseInt(this.dataset.time);
@@ -834,14 +286,12 @@
 
             // Exercise controls
             document.getElementById('pauseExercise').addEventListener('click', togglePause);
-            document.getElementById('skipExercise').addEventListener('click', skipCurrentExercise);
+            document.getElementById('skipExercise').addEventListener('click', nextExercise);
             document.getElementById('nextExercise').addEventListener('click', nextExercise);
 
-            // Feedback buttons
+            // Feedback
             document.querySelectorAll('.feedback-btn').forEach(button => {
                 button.addEventListener('click', function() {
-                    const feedback = this.dataset.feedback;
-                    console.log('User feedback:', feedback);
                     this.style.transform = 'scale(0.95)';
                     setTimeout(() => this.style.transform = 'scale(1)', 150);
                 });
@@ -868,10 +318,8 @@
         }
 
         function generateRoutine() {
-            // Get the appropriate exercise set
             let exerciseSet = exercises[selectedMinutes];
             if (!exerciseSet) {
-                // Find the closest available time
                 const availableTimes = Object.keys(exercises).map(Number).sort((a, b) => a - b);
                 const closestTime = availableTimes.reduce((prev, curr) => 
                     Math.abs(curr - selectedMinutes) < Math.abs(prev - selectedMinutes) ? curr : prev
@@ -888,7 +336,7 @@
             const exerciseList = document.getElementById('exerciseList');
             const routineTitle = document.getElementById('routineTitle');
             
-            routineTitle.textContent = `Your ${selectedMinutes}-Minute ${getRoutineName(selectedMinutes)}`;
+            routineTitle.textContent = `Your ${selectedMinutes}-Minute Warm-Up`;
             
             exerciseList.innerHTML = '';
             currentRoutine.forEach((exercise, index) => {
@@ -896,9 +344,129 @@
                 exerciseDiv.className = 'exercise-item';
                 exerciseDiv.innerHTML = `
                     <div class="exercise-header">
-                        <div class="exercise-content">
-                            <div class="exercise-name">${index + 1}. ${exercise.name}</div>
-                            <div class="exercise-desc">${exercise.description}</div>
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 4px;">${index + 1}. ${exercise.name}</div>
+                            <div style="color: #6b7280; font-size: 0.9rem;">${exercise.description}</div>
                         </div>
-                        <span class="exercise-time">
-                            ${formatTime(
+                        <span class="exercise-time">${formatTime(exercise.duration)}</span>
+                    </div>
+                `;
+                exerciseList.appendChild(exerciseDiv);
+            });
+        }
+
+        function startExerciseRoutine() {
+            currentExerciseIndex = 0;
+            showExerciseScreen();
+            startCurrentExercise();
+        }
+
+        function startCurrentExercise() {
+            if (currentExerciseIndex >= currentRoutine.length) {
+                showCompletionScreen();
+                return;
+            }
+
+            const exercise = currentRoutine[currentExerciseIndex];
+            timeRemaining = exercise.duration;
+            
+            // Update display
+            document.getElementById('exerciseName').textContent = exercise.name;
+            document.getElementById('exerciseDescription').textContent = exercise.description;
+            
+            // Embed video
+            const videoContainer = document.getElementById('exerciseVideo');
+            if (exercise.videoId) {
+                videoContainer.innerHTML = `
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/${exercise.videoId}?autoplay=1&mute=1&controls=1" 
+                                allowfullscreen></iframe>
+                    </div>
+                `;
+            }
+            
+            updateTimerDisplay();
+            updateProgressBar();
+            
+            // Start timer
+            isPaused = false;
+            exerciseTimer = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            if (isPaused) return;
+            
+            timeRemaining--;
+            updateTimerDisplay();
+            
+            if (timeRemaining <= 0) {
+                clearInterval(exerciseTimer);
+                nextExercise();
+            }
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('exerciseTimer').textContent = formatTime(timeRemaining);
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentExerciseIndex + 1) / currentRoutine.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        function nextExercise() {
+            clearInterval(exerciseTimer);
+            currentExerciseIndex++;
+            
+            if (currentExerciseIndex >= currentRoutine.length) {
+                showCompletionScreen();
+            } else {
+                startCurrentExercise();
+            }
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            const button = document.getElementById('pauseExercise');
+            button.textContent = isPaused ? '▶ Resume' : '⏸ Pause';
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Screen navigation
+        function showHomeScreen() {
+            document.getElementById('homeScreen').classList.remove('hidden');
+            document.getElementById('routineScreen').classList.add('hidden');
+            document.getElementById('exerciseScreen').classList.add('hidden');
+            document.getElementById('completionScreen').classList.add('hidden');
+            clearInterval(exerciseTimer);
+        }
+
+        function showRoutineScreen() {
+            document.getElementById('homeScreen').classList.add('hidden');
+            document.getElementById('routineScreen').classList.remove('hidden');
+            document.getElementById('exerciseScreen').classList.add('hidden');
+            document.getElementById('completionScreen').classList.add('hidden');
+        }
+
+        function showExerciseScreen() {
+            document.getElementById('homeScreen').classList.add('hidden');
+            document.getElementById('routineScreen').classList.add('hidden');
+            document.getElementById('exerciseScreen').classList.remove('hidden');
+            document.getElementById('completionScreen').classList.add('hidden');
+        }
+
+        function showCompletionScreen() {
+            document.getElementById('homeScreen').classList.add('hidden');
+            document.getElementById('routineScreen').classList.add('hidden');
+            document.getElementById('exerciseScreen').classList.add('hidden');
+            document.getElementById('completionScreen').classList.remove('hidden');
+            clearInterval(exerciseTimer);
+        }
+    </script>
+</body>
+</html>
