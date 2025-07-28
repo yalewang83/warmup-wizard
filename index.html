@@ -172,7 +172,7 @@
         // Exercise database - temporarily without videos while we find embeddable ones
         const exercises = {
             5: [
-                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms. Start with small circles and gradually make them larger. Do 10 forward, then 10 backward.", videoId: "qejOqN2IY38" },
+                { name: "Arm Circles", duration: 60, description: "Make large, controlled circles with your arms. Start with small circles and gradually make them larger. Do 10 forward, then 10 backward.", videoId: "M7lc1UVf-VE" },
                 { name: "Torso Twists", duration: 60, description: "Stand with feet shoulder-width apart. Rotate your torso left and right, keeping your hips facing forward.", videoId: null },
                 { name: "Practice Swings", duration: 180, description: "Take slow, controlled practice swings. Focus on your posture, grip, and smooth tempo. Start with half swings, then progress to full swings.", videoId: null }
             ],
@@ -383,29 +383,26 @@
             document.getElementById('exerciseName').textContent = exercise.name;
             document.getElementById('exerciseDescription').textContent = exercise.description;
             
-            // Embed video with proper YouTube embed format
+            // Embed video with proper YouTube embed format - FIXED VERSION
             const videoContainer = document.getElementById('exerciseVideo');
-            if (exercise.videoId && exercise.videoId !== null) {
-                // First try the standard embed
+            console.log("Current exercise:", exercise); // Debug log
+            console.log("Video ID:", exercise.videoId); // Debug log
+            
+            if (exercise.videoId && exercise.videoId !== null && exercise.videoId !== "") {
+                console.log("Embedding video with ID:", exercise.videoId); // Debug log
                 videoContainer.innerHTML = `
                     <div class="video-wrapper">
                         <iframe 
-                            src="https://www.youtube.com/embed/${exercise.videoId}?rel=0&showinfo=0&controls=1&modestbranding=1&enablejsapi=1" 
+                            src="https://www.youtube.com/embed/${exercise.videoId}" 
+                            width="100%"
+                            height="315"
                             frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                            allowfullscreen
-                            referrerpolicy="strict-origin-when-cross-origin"
-                            onload="this.style.opacity=1;" 
-                            onerror="handleVideoError(this);"
-                            style="opacity:0; transition: opacity 0.3s;">
+                            allowfullscreen>
                         </iframe>
-                        <div id="video-fallback" style="display: none; text-align: center; padding: 40px; background: #f1f5f9; border-radius: 8px;">
-                            <p style="color: #6b7280; margin-bottom: 16px;">📺 Video demonstration unavailable</p>
-                            <p style="color: #6b7280; font-size: 0.9rem;">Follow the description below to perform this exercise</p>
-                        </div>
                     </div>
                 `;
             } else {
+                console.log("No valid video ID, showing fallback"); // Debug log
                 videoContainer.innerHTML = `
                     <div style="text-align: center; padding: 40px; background: #f1f5f9; border-radius: 8px;">
                         <p style="color: #6b7280; margin-bottom: 16px;">📺 Video demonstration coming soon</p>
