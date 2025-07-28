@@ -1,0 +1,515 @@
+# Warm-Up Wizard iOS App - Design & Implementation Plan
+
+## 1. App Architecture Overview
+
+### Tech Stack
+- **Platform:** Web Application (React/TypeScript)
+- **Frontend Framework:** React 18 with TypeScript
+- **State Management:** Zustand or React Context
+- **Styling:** Tailwind CSS with shadcn/ui components
+- **Data Storage:** localStorage for user preferences, IndexedDB for offline capabilities
+- **Backend:** Node.js/Express with PostgreSQL (for user accounts and analytics)
+- **Hosting:** Vercel/Netlify for frontend, Railway/Render for backend
+- **PWA Features:** Service Worker for offline access and app-like experience
+
+### Core Components
+```
+warmup-wizard/
+├── src/
+│   ├── components/
+│   │   ├── onboarding/
+│   │   ├── routine-generation/
+│   │   ├── exercise-execution/
+│   │   ├── settings/
+│   │   └── common/
+│   ├── hooks/
+│   │   ├── useRoutineGenerator.ts
+│   │   ├── useTimer.ts
+│   │   └── useLocalStorage.ts
+│   ├── stores/
+│   │   ├── userStore.ts
+│   │   ├── routineStore.ts
+│   │   └── settingsStore.ts
+│   ├── services/
+│   │   ├── routineEngine.ts
+│   │   ├── dataManager.ts
+│   │   └── notificationService.ts
+│   ├── types/
+│   │   ├── user.ts
+│   │   ├── routine.ts
+│   │   └── exercise.ts
+│   └── utils/
+├── public/
+│   ├── exercises/
+│   │   ├── videos/
+│   │   └── images/
+│   └── manifest.json (PWA)
+└── package.json
+```
+
+## 2. User Flow & Core Features
+
+### 2.1 Initial Onboarding (First Launch)
+**Screen 1: Welcome & Value Prop**
+- Hero image of golfer warming up
+- "Get pro-style warm-ups tailored to your time and skill level"
+- "Get Started" CTA
+
+**Screen 2: Skill Level Assessment**
+- Beginner (0-2 years playing)
+- Intermediate (3-10 years playing)
+- Advanced (10+ years playing)
+- Visual handicap range indicators
+
+**Screen 3: Physical Considerations**
+- Any mobility limitations? (Yes/No with details)
+- Preferred warm-up intensity (Low/Medium/High)
+- Equipment preferences (stretching bands, weighted clubs, etc.)
+
+**Screen 4: Notification Permissions**
+- "Get reminders to start your warm-up before tee time"
+- Location permissions for course-specific recommendations
+
+### 2.2 Main User Journey
+
+#### Quick Start Flow (Primary Path)
+1. **Time Input Screen**
+   - Large time selector (5-60 minutes, default: 10 minutes)
+   - "How much time before your tee time?"
+   - Quick presets: 5min, 10min, 15min, 20min, 30min
+
+2. **Context Questions (Optional Skip)**
+   - Course difficulty (Easy/Moderate/Challenging)
+   - Weather conditions (slider or quick select)
+   - Recent performance mood (Great/Good/Needs Work)
+   - Current energy level (Low/Medium/High)
+
+3. **Generated Routine Screen**
+   - Personalized routine title: "Your 15-Minute Power Warm-Up"
+   - Exercise overview with time allocations
+   - "Start Warm-Up" prominent CTA
+   - "Customize" option for advanced users
+
+4. **Exercise Execution**
+   - Full-screen exercise cards with animations/videos
+   - Progress bar and timer
+   - Voice instructions toggle
+   - Skip/Previous exercise controls
+   - Pause/Resume functionality
+
+5. **Completion & Feedback**
+   - "You're ready to play!" success message
+   - Quick feedback: "How did that feel?" (thumbs up/down)
+   - "Start Another Round" or "Save This Routine"
+
+### 2.3 Advanced Features
+
+#### Routine Customization
+- Drag-and-drop exercise reordering
+- Add/remove exercises from library
+- Adjust individual exercise duration
+- Save custom routines
+
+#### Performance Tracking
+- Simple post-round check-in
+- Track warm-up completion rates
+- Correlate warm-up types with round performance
+- Weekly/monthly insights
+
+#### Smart Recommendations
+- Learn from user preferences and feedback
+- Weather-based exercise modifications
+- Course-specific warm-up suggestions
+- Time-of-day optimization
+
+## 3. Exercise Library & Routine Engine
+
+### 3.1 Exercise Categories
+
+**Dynamic Stretching (5-15 minutes)**
+- Arm circles and shoulder rolls
+- Hip circles and leg swings
+- Torso twists and side bends
+- Ankle rolls and calf raises
+
+**Golf-Specific Movements (5-20 minutes)**
+- Practice swings with alignment sticks
+- Half-swing tempo work
+- Weight shift drills
+- Balance and stability exercises
+
+**Short Game Practice (5-15 minutes)**
+- Putting stroke mechanics
+- Chipping motion practice
+- Sand shot setup positions
+- Distance control drills
+
+**Mental Preparation (2-10 minutes)**
+- Visualization exercises
+- Breathing techniques
+- Focus and concentration drills
+- Positive affirmation prompts
+
+### 3.2 Routine Generation Algorithm
+
+```swift
+func generateRoutine(
+    timeAvailable: Int,
+    skillLevel: SkillLevel,
+    physicalLimitations: [String],
+    courseConditions: CourseConditions,
+    recentPerformance: PerformanceLevel,
+    userPreferences: UserPreferences
+) -> WarmUpRoutine {
+    
+    // Time allocation logic
+    let timeDistribution = calculateTimeDistribution(timeAvailable)
+    
+    // Exercise selection based on user profile
+    let selectedExercises = selectExercises(
+        from: exerciseLibrary,
+        matching: [skillLevel, physicalLimitations, courseConditions]
+    )
+    
+    // Personalization adjustments
+    let personalizedRoutine = applyPersonalization(
+        exercises: selectedExercises,
+        based: [recentPerformance, userPreferences]
+    )
+    
+    return WarmUpRoutine(
+        exercises: personalizedRoutine,
+        totalDuration: timeAvailable,
+        difficulty: calculateDifficulty()
+    )
+}
+```
+
+### 3.3 Time Distribution Logic
+- **5 minutes:** Essential stretching + 1-2 practice swings (ultra-quick)
+- **10-15 minutes:** Basic stretching + golf-specific movements + putting practice
+- **15-25 minutes:** Add short game drills + mental prep
+- **25+ minutes:** Full comprehensive routine with all categories
+
+## 4. User Interface Design
+
+### 4.1 Design Principles
+- **Speed First:** Minimize clicks to get to a routine
+- **Mobile-Responsive:** Optimized for smartphones and tablets
+- **Cross-Platform:** Works on any device with a web browser
+- **PWA Ready:** App-like experience with offline capabilities
+- **Accessibility:** WCAG 2.1 compliant for all users
+
+### 4.2 Key Screens Design
+
+#### Home Screen
+```
+┌─────────────────────────────┐
+│  ⏰ Ready to warm up?       │
+│                             │
+│  ┌─────────────────────────┐│
+│  │     10 minutes          ││
+│  │   [- 5min ] [+ 5min]    ││
+│  └─────────────────────────┘│
+│                             │
+│  [Generate My Warm-Up]      │
+│                             │
+│  Quick Options:             │
+│  [5min] [10min] [15min]     │
+│  [20min] [30min]            │
+│                             │
+│  Recent Routines ▼          │
+│  • Morning Power Warm-Up    │
+│  • Quick Pre-Round Stretch  │
+└─────────────────────────────┘
+```
+
+#### Exercise Execution Screen
+```
+┌─────────────────────────────┐
+│ [◀] Exercise 3 of 8    [⏸] │
+│                             │
+│     ARM CIRCLES             │
+│                             │
+│  ┌─────────────────────────┐│
+│  │    [Animation/GIF]      ││
+│  │     Golf figure         ││
+│  │   doing arm circles     ││
+│  └─────────────────────────┘│
+│                             │
+│    ⏱️  0:45 remaining        │
+│                             │
+│  "Make large, controlled    │
+│   circles to warm up your   │
+│   shoulder joints"          │
+│                             │
+│  [Skip Exercise]            │
+└─────────────────────────────┘
+```
+
+### 4.3 Visual Elements
+- **Color Scheme:** Golf course greens with accent blues
+- **Typography:** System fonts (Inter/SF Pro) for optimal web rendering
+- **Icons:** Golf-specific iconography with Lucide React icons
+- **Responsive Design:** Mobile-first approach with breakpoints
+- **Animations:** CSS transitions and Framer Motion for smooth interactions
+
+## 5. Data Models
+
+### 5.1 TypeScript Interfaces
+
+```typescript
+// User Profile
+interface UserProfile {
+  id: string;
+  skillLevel: SkillLevel;
+  physicalLimitations: string[];
+  preferredIntensity: IntensityLevel;
+  equipmentAvailable: Equipment[];
+  preferredDuration: number;
+  notificationPreferences: NotificationSettings;
+  createdAt: Date;
+  lastActive: Date;
+}
+
+// Warm-Up Routine
+interface WarmUpRoutine {
+  id: string;
+  name: string;
+  exercises: Exercise[];
+  totalDuration: number; // in seconds
+  skillLevelTargeted: SkillLevel;
+  createdDate: Date;
+  completionRate: number;
+  tags: string[];
+}
+
+// Exercise
+interface Exercise {
+  id: string;
+  name: string;
+  description: string;
+  category: ExerciseCategory;
+  duration: number; // in seconds
+  difficulty: DifficultyLevel;
+  equipmentNeeded: Equipment[];
+  videoUrl?: string;
+  imageUrl?: string;
+  instructions: string[];
+  tips: string[];
+}
+
+// Performance Tracking
+interface WarmUpSession {
+  id: string;
+  routineId: string;
+  completedAt: Date;
+  completed: boolean;
+  skippedExercises: string[];
+  userFeedback?: FeedbackRating;
+  subsequentRoundScore?: number;
+  deviceInfo: {
+    userAgent: string;
+    screenSize: string;
+  };
+}
+```
+
+## 6. Technical Implementation Details
+
+### 6.1 Routine Generation Service
+
+```typescript
+class RoutineEngine {
+  private exerciseLibrary: ExerciseLibrary;
+  private userProfile: UserProfile;
+  
+  generateRoutine(parameters: RoutineParameters): WarmUpRoutine {
+    // 1. Calculate time allocations
+    const allocations = TimeAllocationCalculator.calculate(
+      parameters.duration,
+      this.userProfile.skillLevel
+    );
+    
+    // 2. Filter exercises by constraints
+    const availableExercises = this.exerciseLibrary.exercises
+      .filter(exercise => this.meetsConstraints(exercise, parameters));
+    
+    // 3. Select optimal combination
+    const selectedExercises = ExerciseSelector.selectOptimalSet(
+      availableExercises,
+      allocations,
+      this.userProfile
+    );
+    
+    // 4. Order exercises logically
+    const orderedExercises = ExerciseOrderer.orderForOptimalFlow(
+      selectedExercises
+    );
+    
+    return {
+      id: crypto.randomUUID(),
+      name: this.generateRoutineName(parameters),
+      exercises: orderedExercises,
+      totalDuration: parameters.duration,
+      skillLevelTargeted: this.userProfile.skillLevel,
+      createdDate: new Date(),
+      completionRate: 0,
+      tags: this.generateTags(parameters)
+    };
+  }
+  
+  private meetsConstraints(exercise: Exercise, params: RoutineParameters): boolean {
+    // Implement constraint checking logic
+    return true;
+  }
+}
+```
+
+### 6.2 Timer and Exercise Management
+
+```typescript
+// Custom Hook for Exercise Timer
+export const useExerciseTimer = (routine: WarmUpRoutine) => {
+  const [currentExercise, setCurrentExercise] = useState<Exercise | null>(null);
+  const [timeRemaining, setTimeRemaining] = useState<number>(0);
+  const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [currentExerciseIndex, setCurrentExerciseIndex] = useState<number>(0);
+  
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const startExercise = useCallback(() => {
+    setIsRunning(true);
+    timerRef.current = setInterval(() => {
+      setTimeRemaining(prev => {
+        if (prev <= 1) {
+          nextExercise();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }, []);
+  
+  const pauseExercise = useCallback(() => {
+    setIsRunning(false);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+  
+  const nextExercise = useCallback(() => {
+    if (currentExerciseIndex < routine.exercises.length - 1) {
+      const nextIndex = currentExerciseIndex + 1;
+      setCurrentExerciseIndex(nextIndex);
+      setCurrentExercise(routine.exercises[nextIndex]);
+      setTimeRemaining(routine.exercises[nextIndex].duration);
+    } else {
+      completeRoutine();
+    }
+  }, [currentExerciseIndex, routine.exercises]);
+  
+  const completeRoutine = useCallback(() => {
+    setIsRunning(false);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    // Handle routine completion
+  }, []);
+  
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
+  
+  return {
+    currentExercise,
+    timeRemaining,
+    isRunning,
+    currentExerciseIndex,
+    startExercise,
+    pauseExercise,
+    nextExercise,
+    totalExercises: routine.exercises.length
+  };
+};
+```
+
+## 7. MVP Feature Prioritization
+
+### Phase 1 (MVP - 6-8 weeks)
+1. **Core Routine Generation**
+   - Basic exercise library (20-30 exercises)
+   - Time-based routine creation
+   - Simple skill level filtering
+
+2. **Exercise Execution**
+   - Timer functionality
+   - Exercise instructions and descriptions
+   - Basic navigation (next/previous/skip)
+
+3. **Essential Onboarding**
+   - Skill level selection
+   - Basic preferences setup
+
+### Phase 2 (Enhancement - 4-6 weeks)
+1. **Personalization**
+   - Physical limitations consideration
+   - Course condition inputs
+   - Performance feedback integration
+
+2. **Advanced Features**
+   - Routine customization
+   - Favorite routines
+   - Exercise animations/videos
+
+### Phase 3 (Optimization - 4-6 weeks)
+1. **Smart Features**
+   - ML-based routine optimization
+   - Performance correlation tracking
+   - Weather integration
+
+2. **Social & Sharing**
+   - Routine sharing
+   - Achievement system
+   - Community features
+
+## 8. Success Metrics & Analytics
+
+### 8.1 Key Performance Indicators
+- **User Engagement:** Daily/Weekly Active Users
+- **Routine Completion Rate:** % of started routines completed
+- **User Retention:** 7-day, 30-day retention rates
+- **Feature Adoption:** % using advanced customization features
+- **User Satisfaction:** In-app feedback ratings, App Store reviews
+
+### 8.2 Data Collection Points
+- Routine generation parameters
+- Exercise completion/skip rates
+- Time spent per exercise
+- User feedback on difficulty/effectiveness
+- Correlation with subsequent round performance (optional user input)
+
+## 9. Future Roadmap Considerations
+
+### V2 Features
+- **Mobile Apps:** Native iOS/Android apps for enhanced performance
+- **Wearable Integration:** Smartwatch apps for hands-free guidance
+- **Video Content:** Professional instruction videos with 4K quality
+- **AI Coach:** Personalized tips based on performance patterns
+- **Social Features:** Challenge friends, share achievements
+- **Pro Integration:** Content partnerships with PGA professionals
+
+### V3+ Advanced Features
+- **AR Integration:** WebXR overlay exercise guidance on real environment
+- **Biometric Integration:** Heart rate monitoring via connected devices
+- **GPS Integration:** Location-based course recommendations
+- **Equipment E-commerce:** Recommended warm-up equipment purchasing
+- **Tournament Mode:** Competition-specific warm-up routines
+- **Voice Commands:** Hands-free navigation and control
+
+This implementation plan provides a comprehensive foundation for building the Warm-Up Wizard app while maintaining focus on the core value proposition of fast, tailored warm-up routines for golfers.
