@@ -4,176 +4,680 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Warm-Up Wizard - Golf Pre-Round Routines</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .golf-green { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
-        .exercise-card { transition: all 0.3s ease; }
-        .exercise-card:hover { transform: translateY(-2px); }
-        .timer-circle { 
-            stroke-dasharray: 283; 
-            stroke-dashoffset: 283;
-            transition: stroke-dashoffset 1s linear;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .progress-ring { transform: rotate(-90deg); }
-        .fade-in { animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            padding: 32px 16px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+            margin: 32px 0;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .card .subtitle {
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        /* Time Selector */
+        .time-display {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .time-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #16a34a;
+            display: inline;
+        }
+
+        .time-unit {
+            font-size: 1.5rem;
+            color: #6b7280;
+            margin-left: 8px;
+        }
+
+        .time-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 16px 0;
+            justify-content: center;
+        }
+
+        .time-btn {
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .time-btn:hover {
+            background: #16a34a;
+        }
+
+        .time-slider {
+            flex: 1;
+            margin: 0 16px;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .time-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #22c55e;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .time-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #22c55e;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Quick Options */
+        .quick-options {
+            margin-bottom: 24px;
+        }
+
+        .quick-options p {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .preset-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: #22c55e;
+            color: white;
+        }
+
+        .preset-btn.active {
+            background: #22c55e;
+            color: white;
+        }
+
+        /* Main Button */
+        .main-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 14px rgba(34, 197, 94, 0.3);
+        }
+
+        .main-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Quick Routines */
+        .routine-list {
+            margin-top: 16px;
+        }
+
+        .routine-item {
+            width: 100%;
+            background: #f8fafc;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: background-color 0.2s;
+        }
+
+        .routine-item:hover {
+            background: #ecfdf5;
+        }
+
+        .routine-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .routine-desc {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        /* Exercise List */
+        .exercise-list {
+            margin-bottom: 24px;
+        }
+
+        .exercise-item {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #22c55e;
+            margin-bottom: 16px;
+            transition: transform 0.2s;
+        }
+
+        .exercise-item:hover {
+            transform: translateY(-1px);
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .exercise-content {
+            flex: 1;
+        }
+
+        .exercise-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .exercise-desc {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .exercise-time {
+            background: #dcfce7;
+            color: #166534;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-left: 16px;
+            white-space: nowrap;
+        }
+
+        /* Exercise Screen */
+        .exercise-screen {
+            text-align: center;
+        }
+
+        .progress-section {
+            margin-bottom: 24px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #22c55e;
+            transition: width 0.3s;
+        }
+
+        .exercise-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 24px;
+        }
+
+        .timer-section {
+            margin-bottom: 24px;
+        }
+
+        .timer-circle {
+            width: 120px;
+            height: 120px;
+            border: 8px solid #e2e8f0;
+            border-top: 8px solid #22c55e;
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .timer-circle.paused {
+            animation-play-state: paused;
+        }
+
+        .exercise-instruction {
+            background: #dbeafe;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 0 auto 24px;
+            max-width: 500px;
+            color: #1e40af;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .pause-btn {
+            background: #fbbf24;
+            color: white;
+        }
+
+        .pause-btn:hover {
+            background: #f59e0b;
+        }
+
+        .skip-btn {
+            background: #6b7280;
+            color: white;
+        }
+
+        .skip-btn:hover {
+            background: #4b5563;
+        }
+
+        .next-btn {
+            background: #22c55e;
+            color: white;
+        }
+
+        .next-btn:hover {
+            background: #16a34a;
+        }
+
+        /* Completion Screen */
+        .completion-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+
+        .completion-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #16a34a;
+            margin-bottom: 16px;
+        }
+
+        .completion-text {
+            color: #6b7280;
+            font-size: 1.1rem;
+            margin-bottom: 24px;
+        }
+
+        .feedback-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .feedback-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .feedback-good {
+            background: #22c55e;
+        }
+
+        .feedback-good:hover {
+            background: #16a34a;
+        }
+
+        .feedback-okay {
+            background: #fbbf24;
+        }
+
+        .feedback-okay:hover {
+            background: #f59e0b;
+        }
+
+        .feedback-hard {
+            background: #ef4444;
+        }
+
+        .feedback-hard:hover {
+            background: #dc2626;
+        }
+
+        /* Navigation */
+        .back-btn {
+            color: #16a34a;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            color: #15803d;
+        }
+
+        .screen-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px;
+            color: #6b7280;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 24px;
+                margin: 16px 0;
+            }
+
+            .time-number {
+                font-size: 2.5rem;
+            }
+
+            .exercise-title {
+                font-size: 1.5rem;
+            }
+
+            .controls {
+                gap: 8px;
+            }
+
+            .control-btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+
+            .feedback-buttons {
+                gap: 8px;
+            }
+
+            .feedback-btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body>
     <div id="app">
         <!-- Header -->
-        <header class="golf-green text-white py-6 px-4 shadow-lg">
-            <div class="max-w-4xl mx-auto text-center">
-                <h1 class="text-3xl md:text-4xl font-bold mb-2">⛳ Warm-Up Wizard</h1>
-                <p class="text-green-100 text-lg">Pro-style warm-ups tailored to your time</p>
+        <header class="header">
+            <div class="container">
+                <h1>⛳ Warm-Up Wizard</h1>
+                <p>Pro-style warm-ups tailored to your time</p>
             </div>
         </header>
 
         <!-- Main Content -->
-        <main class="max-w-4xl mx-auto px-4 py-8">
+        <main class="container">
             <!-- Home Screen -->
-            <div id="homeScreen" class="fade-in">
-                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-                    <div class="text-center mb-8">
-                        <h2 class="text-2xl font-semibold text-gray-800 mb-2">⏰ Ready to warm up?</h2>
-                        <p class="text-gray-600">Tell us how much time you have before your tee time</p>
-                    </div>
+            <div id="homeScreen">
+                <div class="card">
+                    <h2>⏰ Ready to warm up?</h2>
+                    <p class="subtitle">Tell us how much time you have before your tee time</p>
 
                     <!-- Time Selector -->
-                    <div class="bg-gray-50 rounded-xl p-6 mb-6">
-                        <div class="text-center mb-4">
-                            <span id="selectedTime" class="text-4xl font-bold text-green-600">10</span>
-                            <span class="text-2xl text-gray-600 ml-1">minutes</span>
-                        </div>
-                        <div class="flex justify-center items-center gap-4 mb-4">
-                            <button id="decreaseTime" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">- 5min</button>
-                            <input type="range" id="timeSlider" min="5" max="60" value="10" step="5" class="flex-1">
-                            <button id="increaseTime" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">+ 5min</button>
+                    <div class="time-display">
+                        <span id="selectedTime" class="time-number">10</span>
+                        <span class="time-unit">minutes</span>
+                        <div class="time-controls">
+                            <button id="decreaseTime" class="time-btn">- 5min</button>
+                            <input type="range" id="timeSlider" class="time-slider" min="5" max="60" value="10" step="5">
+                            <button id="increaseTime" class="time-btn">+ 5min</button>
                         </div>
                     </div>
 
                     <!-- Quick Options -->
-                    <div class="mb-6">
-                        <p class="text-center text-gray-600 mb-3">Quick Options:</p>
-                        <div class="flex flex-wrap justify-center gap-2">
-                            <button class="time-preset bg-gray-200 hover:bg-green-500 hover:text-white px-4 py-2 rounded-lg transition-colors" data-time="5">5min</button>
-                            <button class="time-preset bg-green-500 text-white px-4 py-2 rounded-lg" data-time="10">10min</button>
-                            <button class="time-preset bg-gray-200 hover:bg-green-500 hover:text-white px-4 py-2 rounded-lg transition-colors" data-time="15">15min</button>
-                            <button class="time-preset bg-gray-200 hover:bg-green-500 hover:text-white px-4 py-2 rounded-lg transition-colors" data-time="20">20min</button>
-                            <button class="time-preset bg-gray-200 hover:bg-green-500 hover:text-white px-4 py-2 rounded-lg transition-colors" data-time="30">30min</button>
+                    <div class="quick-options">
+                        <p>Quick Options:</p>
+                        <div class="preset-buttons">
+                            <button class="preset-btn" data-time="5">5min</button>
+                            <button class="preset-btn active" data-time="10">10min</button>
+                            <button class="preset-btn" data-time="15">15min</button>
+                            <button class="preset-btn" data-time="20">20min</button>
+                            <button class="preset-btn" data-time="30">30min</button>
                         </div>
                     </div>
 
                     <!-- Generate Button -->
-                    <button id="generateRoutine" class="w-full golf-green text-white py-4 rounded-xl text-xl font-semibold hover:scale-105 transition-transform shadow-lg">
+                    <button id="generateRoutine" class="main-btn">
                         Generate My Warm-Up
                     </button>
                 </div>
 
                 <!-- Recent Routines -->
-                <div class="bg-white rounded-2xl shadow-xl p-6">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">📋 Quick Start Templates</h3>
-                    <div class="space-y-3">
-                        <button class="quick-routine w-full text-left p-4 bg-gray-50 hover:bg-green-50 rounded-lg transition-colors" data-time="5">
-                            <div class="font-medium text-gray-800">Ultra-Quick Stretch (5 min)</div>
-                            <div class="text-sm text-gray-600">Essential stretches + 2 practice swings</div>
+                <div class="card">
+                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 16px;">📋 Quick Start Templates</h3>
+                    <div class="routine-list">
+                        <button class="routine-item" data-time="5">
+                            <div class="routine-title">Ultra-Quick Stretch (5 min)</div>
+                            <div class="routine-desc">Essential stretches + 2 practice swings</div>
                         </button>
-                        <button class="quick-routine w-full text-left p-4 bg-gray-50 hover:bg-green-50 rounded-lg transition-colors" data-time="10">
-                            <div class="font-medium text-gray-800">Morning Power Warm-Up (10 min)</div>
-                            <div class="text-sm text-gray-600">Dynamic stretching + swing prep</div>
+                        <button class="routine-item" data-time="10">
+                            <div class="routine-title">Morning Power Warm-Up (10 min)</div>
+                            <div class="routine-desc">Dynamic stretching + swing prep</div>
                         </button>
-                        <button class="quick-routine w-full text-left p-4 bg-gray-50 hover:bg-green-50 rounded-lg transition-colors" data-time="20">
-                            <div class="font-medium text-gray-800">Complete Pre-Round Routine (20 min)</div>
-                            <div class="text-sm text-gray-600">Full body prep + short game practice</div>
+                        <button class="routine-item" data-time="20">
+                            <div class="routine-title">Complete Pre-Round Routine (20 min)</div>
+                            <div class="routine-desc">Full body prep + short game practice</div>
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- Routine Display Screen -->
-            <div id="routineScreen" class="fade-in hidden">
-                <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <button id="backToHome" class="text-green-600 hover:text-green-800 font-medium">← Back</button>
-                        <h2 id="routineTitle" class="text-2xl font-bold text-gray-800">Your 10-Minute Power Warm-Up</h2>
+            <div id="routineScreen" class="hidden">
+                <div class="card">
+                    <div class="screen-header">
+                        <button id="backToHome" class="back-btn">← Back</button>
+                        <h2 id="routineTitle" style="margin: 0;">Your 10-Minute Power Warm-Up</h2>
                         <div></div>
                     </div>
 
-                    <div id="exerciseList" class="space-y-4 mb-6">
+                    <div id="exerciseList" class="exercise-list">
                         <!-- Exercises will be populated here -->
                     </div>
 
-                    <button id="startRoutine" class="w-full golf-green text-white py-4 rounded-xl text-xl font-semibold hover:scale-105 transition-transform shadow-lg">
+                    <button id="startRoutine" class="main-btn">
                         Start Warm-Up
                     </button>
                 </div>
             </div>
 
             <!-- Exercise Execution Screen -->
-            <div id="exerciseScreen" class="fade-in hidden">
-                <div class="bg-white rounded-2xl shadow-xl p-6">
+            <div id="exerciseScreen" class="hidden">
+                <div class="card exercise-screen">
                     <!-- Progress Bar -->
-                    <div class="mb-6">
-                        <div class="flex justify-between text-sm text-gray-600 mb-2">
+                    <div class="progress-section">
+                        <div class="progress-info">
                             <span id="exerciseProgress">Exercise 1 of 5</span>
                             <span id="totalTimeRemaining">8:30 remaining</span>
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div id="progressBar" class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: 20%"></div>
+                        <div class="progress-bar-bg">
+                            <div id="progressBar" class="progress-bar" style="width: 20%"></div>
                         </div>
                     </div>
 
                     <!-- Exercise Content -->
-                    <div class="text-center mb-8">
-                        <h2 id="exerciseName" class="text-3xl font-bold text-gray-800 mb-4">Arm Circles</h2>
-                        
-                        <!-- Timer Circle -->
-                        <div class="relative inline-block mb-6">
-                            <svg class="progress-ring w-32 h-32">
-                                <circle cx="64" cy="64" r="45" stroke="#e5e7eb" stroke-width="8" fill="none"/>
-                                <circle id="timerCircle" cx="64" cy="64" r="45" stroke="#22c55e" stroke-width="8" fill="none" class="timer-circle"/>
-                            </svg>
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <span id="exerciseTimer" class="text-2xl font-bold text-gray-800">0:30</span>
-                            </div>
-                        </div>
-
-                        <div id="exerciseDescription" class="bg-blue-50 rounded-lg p-4 mb-6 max-w-lg mx-auto">
-                            <p class="text-gray-700">Make large, controlled circles with your arms to warm up your shoulder joints and prepare for your swing.</p>
+                    <h2 id="exerciseName" class="exercise-title">Arm Circles</h2>
+                    
+                    <!-- Timer -->
+                    <div class="timer-section">
+                        <div id="timerCircle" class="timer-circle">
+                            <span id="exerciseTimer">0:30</span>
                         </div>
                     </div>
 
+                    <div id="exerciseDescription" class="exercise-instruction">
+                        <p>Make large, controlled circles with your arms to warm up your shoulder joints and prepare for your swing.</p>
+                    </div>
+
                     <!-- Exercise Controls -->
-                    <div class="flex justify-center gap-4">
-                        <button id="pauseExercise" class="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 transition-colors">⏸️ Pause</button>
-                        <button id="skipExercise" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors">⏭️ Skip</button>
-                        <button id="nextExercise" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors">Next ▶️</button>
+                    <div class="controls">
+                        <button id="pauseExercise" class="control-btn pause-btn">⏸ Pause</button>
+                        <button id="skipExercise" class="control-btn skip-btn">⏭ Skip</button>
+                        <button id="nextExercise" class="control-btn next-btn">Next ▶</button>
                     </div>
                 </div>
             </div>
 
             <!-- Completion Screen -->
-            <div id="completionScreen" class="fade-in hidden">
-                <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
-                    <div class="text-6xl mb-4">🏌️‍♂️</div>
-                    <h2 class="text-3xl font-bold text-green-600 mb-4">You're Ready to Play!</h2>
-                    <p class="text-gray-600 text-lg mb-6">Great job completing your warm-up routine. Your body is now prepared for a great round of golf!</p>
+            <div id="completionScreen" class="hidden">
+                <div class="card text-center">
+                    <div class="completion-icon">🏌️‍♂️</div>
+                    <h2 class="completion-title">You're Ready to Play!</h2>
+                    <p class="completion-text">Great job completing your warm-up routine. Your body is now prepared for a great round of golf!</p>
                     
-                    <div class="flex justify-center gap-4 mb-6">
-                        <button class="feedback-btn bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors" data-feedback="good">
+                    <div class="feedback-buttons">
+                        <button class="feedback-btn feedback-good" data-feedback="good">
                             👍 Felt Great
                         </button>
-                        <button class="feedback-btn bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 transition-colors" data-feedback="okay">
+                        <button class="feedback-btn feedback-okay" data-feedback="okay">
                             👌 It Was Okay
                         </button>
-                        <button class="feedback-btn bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-colors" data-feedback="hard">
+                        <button class="feedback-btn feedback-hard" data-feedback="hard">
                             👎 Too Difficult
                         </button>
                     </div>
 
-                    <button id="startNewRoutine" class="golf-green text-white px-8 py-3 rounded-lg hover:scale-105 transition-transform">
+                    <button id="startNewRoutine" class="main-btn">
                         Start Another Routine
                     </button>
                 </div>
@@ -181,7 +685,7 @@
         </main>
 
         <!-- Footer -->
-        <footer class="text-center py-8 text-gray-500">
+        <footer class="footer">
             <p>&copy; 2025 Warm-Up Wizard. Built for golfers who want to play their best.</p>
         </footer>
     </div>
@@ -285,7 +789,7 @@
             });
 
             // Quick preset buttons
-            document.querySelectorAll('.time-preset').forEach(button => {
+            document.querySelectorAll('.preset-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     selectedMinutes = parseInt(this.dataset.time);
                     updateTimeDisplay();
@@ -295,7 +799,7 @@
             });
 
             // Quick routine buttons
-            document.querySelectorAll('.quick-routine').forEach(button => {
+            document.querySelectorAll('.routine-item').forEach(button => {
                 button.addEventListener('click', function() {
                     selectedMinutes = parseInt(this.dataset.time);
                     generateRoutine();
@@ -317,7 +821,6 @@
             document.querySelectorAll('.feedback-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const feedback = this.dataset.feedback;
-                    // Here you could save feedback to localStorage or send to analytics
                     console.log('User feedback:', feedback);
                     this.style.transform = 'scale(0.95)';
                     setTimeout(() => this.style.transform = 'scale(1)', 150);
@@ -334,14 +837,12 @@
         }
 
         function updatePresetButtons() {
-            document.querySelectorAll('.time-preset').forEach(button => {
+            document.querySelectorAll('.preset-btn').forEach(button => {
                 const time = parseInt(button.dataset.time);
                 if (time === selectedMinutes) {
-                    button.classList.add('bg-green-500', 'text-white');
-                    button.classList.remove('bg-gray-200', 'hover:bg-green-500', 'hover:text-white');
+                    button.classList.add('active');
                 } else {
-                    button.classList.remove('bg-green-500', 'text-white');
-                    button.classList.add('bg-gray-200', 'hover:bg-green-500', 'hover:text-white');
+                    button.classList.remove('active');
                 }
             });
         }
@@ -372,156 +873,12 @@
             exerciseList.innerHTML = '';
             currentRoutine.forEach((exercise, index) => {
                 const exerciseDiv = document.createElement('div');
-                exerciseDiv.className = 'exercise-card bg-gray-50 p-4 rounded-lg border-l-4 border-green-500';
+                exerciseDiv.className = 'exercise-item';
                 exerciseDiv.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div class="flex-1">
-                            <h4 class="font-semibold text-gray-800">${index + 1}. ${exercise.name}</h4>
-                            <p class="text-sm text-gray-600 mt-1">${exercise.description}</p>
+                    <div class="exercise-header">
+                        <div class="exercise-content">
+                            <div class="exercise-name">${index + 1}. ${exercise.name}</div>
+                            <div class="exercise-desc">${exercise.description}</div>
                         </div>
-                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm ml-4">
-                            ${formatTime(exercise.duration)}
-                        </span>
-                    </div>
-                `;
-                exerciseList.appendChild(exerciseDiv);
-            });
-        }
-
-        function getRoutineName(minutes) {
-            if (minutes <= 5) return 'Quick Stretch';
-            if (minutes <= 10) return 'Power Warm-Up';
-            if (minutes <= 15) return 'Complete Prep';
-            if (minutes <= 20) return 'Pro Routine';
-            return 'Championship Warm-Up';
-        }
-
-        function startExerciseRoutine() {
-            currentExerciseIndex = 0;
-            showExerciseScreen();
-            startCurrentExercise();
-        }
-
-        function startCurrentExercise() {
-            if (currentExerciseIndex >= currentRoutine.length) {
-                showCompletionScreen();
-                return;
-            }
-
-            const exercise = currentRoutine[currentExerciseIndex];
-            timeRemaining = exercise.duration;
-            
-            // Update display
-            document.getElementById('exerciseName').textContent = exercise.name;
-            document.getElementById('exerciseDescription').querySelector('p').textContent = exercise.description;
-            document.getElementById('exerciseProgress').textContent = `Exercise ${currentExerciseIndex + 1} of ${currentRoutine.length}`;
-            
-            updateTimerDisplay();
-            updateProgressBar();
-            updateTotalTimeRemaining();
-            
-            // Start timer
-            isPaused = false;
-            exerciseTimer = setInterval(updateTimer, 1000);
-        }
-
-        function updateTimer() {
-            if (isPaused) return;
-            
-            timeRemaining--;
-            updateTimerDisplay();
-            updateTimerCircle();
-            
-            if (timeRemaining <= 0) {
-                clearInterval(exerciseTimer);
-                nextExercise();
-            }
-        }
-
-        function updateTimerDisplay() {
-            document.getElementById('exerciseTimer').textContent = formatTime(timeRemaining);
-        }
-
-        function updateTimerCircle() {
-            const circle = document.getElementById('timerCircle');
-            const exercise = currentRoutine[currentExerciseIndex];
-            const progress = (exercise.duration - timeRemaining) / exercise.duration;
-            const circumference = 2 * Math.PI * 45;
-            const offset = circumference * (1 - progress);
-            circle.style.strokeDashoffset = offset;
-        }
-
-        function updateProgressBar() {
-            const progress = ((currentExerciseIndex + 1) / currentRoutine.length) * 100;
-            document.getElementById('progressBar').style.width = `${progress}%`;
-        }
-
-        function updateTotalTimeRemaining() {
-            let totalRemaining = timeRemaining;
-            for (let i = currentExerciseIndex + 1; i < currentRoutine.length; i++) {
-                totalRemaining += currentRoutine[i].duration;
-            }
-            document.getElementById('totalTimeRemaining').textContent = formatTime(totalRemaining) + ' remaining';
-        }
-
-        function nextExercise() {
-            clearInterval(exerciseTimer);
-            currentExerciseIndex++;
-            
-            if (currentExerciseIndex >= currentRoutine.length) {
-                showCompletionScreen();
-            } else {
-                startCurrentExercise();
-            }
-        }
-
-        function skipCurrentExercise() {
-            clearInterval(exerciseTimer);
-            nextExercise();
-        }
-
-        function togglePause() {
-            isPaused = !isPaused;
-            const button = document.getElementById('pauseExercise');
-            button.textContent = isPaused ? '▶️ Resume' : '⏸️ Pause';
-        }
-
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        // Screen navigation
-        function showHomeScreen() {
-            homeScreen.classList.remove('hidden');
-            routineScreen.classList.add('hidden');
-            exerciseScreen.classList.add('hidden');
-            completionScreen.classList.add('hidden');
-            clearInterval(exerciseTimer);
-        }
-
-        function showRoutineScreen() {
-            homeScreen.classList.add('hidden');
-            routineScreen.classList.remove('hidden');
-            exerciseScreen.classList.add('hidden');
-            completionScreen.classList.add('hidden');
-        }
-
-        function showExerciseScreen() {
-            homeScreen.classList.add('hidden');
-            routineScreen.classList.add('hidden');
-            exerciseScreen.classList.remove('hidden');
-            completionScreen.classList.add('hidden');
-        }
-
-        function showCompletionScreen() {
-            homeScreen.classList.add('hidden');
-            routineScreen.classList.add('hidden');
-            exerciseScreen.classList.add('hidden');
-            completionScreen.classList.remove('hidden');
-            clearInterval(exerciseTimer);
-        }
-    </script>
-</body>
-</html>
+                        <span class="exercise-time">
+                            ${formatTime(
